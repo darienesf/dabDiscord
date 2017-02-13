@@ -8,7 +8,7 @@ import java.util.function.BiConsumer
 import java.util.function.Consumer
 
 class Server(val requester: Requester, val guild: Guild, val playerManager: AudioPlayerManager) {
-    val queue: Queue? = null //TODO initialize, remove ?
+    val queue: Queue = Queue(requester, this)
 
     init {
         addServer()
