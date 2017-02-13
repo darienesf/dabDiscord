@@ -51,7 +51,7 @@ class Requester {
                 .url(baseUrl + url)
                 .method(method.name, body)
                 .build()
-        client.newCall(r).enqueue(object : Callback {
+        client.newCall(r).enqueue(object {
             override fun onFailure(c: Call, e: IOException) {
                 val m = c.request().method()
                 val p = c.request().url().uri().path

@@ -1,25 +1,26 @@
 package ovh.not.dabbot
 
 import com.moandjiezana.toml.Toml
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager
+import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager
+import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers
 import net.dv8tion.jda.core.AccountType
 import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.JDABuilder
 import net.dv8tion.jda.core.entities.Game
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent
-import net.dv8tion.jda.core.hooks.ListenerAdapter
 import javax.security.auth.login.LoginException
 
 class ShardManager {
     private val shards: Array<Shard?>
     private val useSharding: Boolean
     private val shardCount: Int
-    private val toml: Toml
+    private val config: Toml
     private val token: String
     private val game: String
 
-    constructor(toml: Toml) {
-        this.toml = toml
-        val discordConfig = toml.getTable("discord")
+    constructor(config: Toml) {
+        this.config = config
+        val discordConfig = config.getTable("discord")
         this.token = discordConfig.getString("token")
         this.game = discordConfig.getString("game")
         shards = kotlin.arrayOfNulls<Shard>(1)
@@ -28,9 +29,9 @@ class ShardManager {
         shards[0] = Shard(this)
     }
 
-    constructor(toml: Toml, shardCount: Int, minShard: Int, maxShard: Int) {
-        this.toml = toml
-        val discordConfig = toml.getTable("discord")
+    constructor(config: Toml, shardCount: Int, minShard: Int, maxShard: Int) {
+        this.config = config
+        val discordConfig = config.getTable("discord")
         this.token = discordConfig.getString("token")
         this.game = discordConfig.getString("game")
         shards = kotlin.arrayOfNulls<Shard>((maxShard - minShard) + 1)
@@ -46,30 +47,28 @@ class ShardManager {
         }
     }
 
-    class Shard {
-        val manager: ShardManager
-        val shard: Int
+    class Shard(val manager: ShardManager) {
+        var shard: Int = 0
         var jda: JDA? = null
+        var commandManager: CommandManager? = null
+        var listener: Listener? = null
+        var playerManager: AudioPlayerManager? = null
 
-        constructor(manager: ShardManager) {
-            this.manager = manager
-            shard = 0
+        init {
             create()
         }
 
-        constructor(manager: ShardManager, shard: Int) {
-            this.manager = manager
+        constructor(manager: ShardManager, shard: Int): this(manager) {
             this.shard = shard
-            create()
         }
 
         fun create() {
             println("Starting shard $shard...")
-            val builder = JDABuilder(AccountType.BOT).setToken(manager.token).addListener(object : ListenerAdapter() {
-                override fun onMessageReceived(event: MessageReceivedEvent) {
-                    println(event.message.content)
-                }
-            })
+            commandManager = CommandManager(manager.config, this)
+            listener = Listener(commandManager!!, manager.config)
+            playerManager = DefaultAudioPlayerManager()
+            AudioSourceManagers.registerRemoteSources(playerManager)
+            val builder = JDABuilder(AccountType.BOT).setToken(manager.token).addListener(listener)
             if (manager.useSharding) {
                 builder.useSharding(shard, manager.shardCount)
             }

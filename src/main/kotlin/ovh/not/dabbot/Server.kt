@@ -2,20 +2,15 @@ package ovh.not.dabbot
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager
 import net.dv8tion.jda.core.entities.Guild
+import net.dv8tion.jda.core.entities.VoiceChannel
 import org.json.JSONObject
 import java.util.function.BiConsumer
 import java.util.function.Consumer
 
-class Server {
-    val requester: Requester
-    val guild: Guild
-    val playerManager: AudioPlayerManager
+class Server(val requester: Requester, val guild: Guild, val playerManager: AudioPlayerManager) {
     val queue: Queue? = null //TODO initialize, remove ?
 
-    constructor(requester: Requester, guild: Guild, playerManager: AudioPlayerManager) {
-        this.requester = requester
-        this.guild = guild
-        this.playerManager = playerManager
+    init {
         addServer()
     }
 
@@ -31,7 +26,7 @@ class Server {
         }, Consumer { e -> throw e })
     }
 
-    fun open() {
+    fun open(channel: VoiceChannel) {
         throw UnsupportedOperationException()
     }
 
