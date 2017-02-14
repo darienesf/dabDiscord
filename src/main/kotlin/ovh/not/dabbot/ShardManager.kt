@@ -11,7 +11,7 @@ import net.dv8tion.jda.core.entities.Game
 import javax.security.auth.login.LoginException
 
 class ShardManager {
-    private val shards: Array<Shard?>
+    val shards: Array<Shard?>
     private val useSharding: Boolean
     private val shardCount: Int
     private val config: Toml
@@ -53,6 +53,8 @@ class ShardManager {
         var commandManager: CommandManager? = null
         var listener: Listener? = null
         var playerManager: AudioPlayerManager? = null
+        var requester: Requester? = null
+        var serverManager: ServerManager? = null
 
         init {
             create()
@@ -65,10 +67,14 @@ class ShardManager {
         fun create() {
             println("Starting shard $shard...")
             commandManager = CommandManager(manager.config, this)
-            listener = Listener(commandManager!!, manager.config)
+            listener = Listener(this, commandManager!!, manager.config)
             playerManager = DefaultAudioPlayerManager()
             AudioSourceManagers.registerRemoteSources(playerManager)
+            val apiTable = manager.config.getTable("api")
+            requester = Requester(apiTable.getString("url"), apiTable.getString("token"))
+            serverManager = ServerManager(requester!!, playerManager!!)
             val builder = JDABuilder(AccountType.BOT).setToken(manager.token).addListener(listener)
+                    .setAudioEnabled(true)
             if (manager.useSharding) {
                 builder.useSharding(shard, manager.shardCount)
             }

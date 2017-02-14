@@ -1,7 +1,8 @@
 package ovh.not.dabbot
 
 import com.moandjiezana.toml.Toml
-import ovh.not.dabbot.command.TestCommand
+import ovh.not.dabbot.command.AdminCommand
+import ovh.not.dabbot.command.PlayCommand
 import java.util.*
 
 class CommandManager(config: Toml, shard: ShardManager.Shard) {
@@ -9,7 +10,8 @@ class CommandManager(config: Toml, shard: ShardManager.Shard) {
 
     init {
         register(
-                TestCommand()
+                AdminCommand(config),
+                PlayCommand()
         )
     }
 

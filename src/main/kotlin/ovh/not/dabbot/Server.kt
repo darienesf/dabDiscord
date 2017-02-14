@@ -1,52 +1,89 @@
 package ovh.not.dabbot
 
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayer
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager
 import net.dv8tion.jda.core.entities.Guild
 import net.dv8tion.jda.core.entities.VoiceChannel
 import org.json.JSONObject
-import java.util.function.BiConsumer
-import java.util.function.Consumer
 
 class Server(val requester: Requester, val guild: Guild, val playerManager: AudioPlayerManager) {
-    val queue: Queue = Queue(requester, this)
+    val audioPlayer: AudioPlayer = playerManager.createPlayer()
+    var queue: Queue? = Queue(requester, this)
+    var voiceChannel: VoiceChannel? = null
+    var playing = false
+    var connected = false
 
     init {
-        addServer()
-    }
-
-    private fun addServer() {
+        guild.audioManager.sendingHandler = AudioPlayerSendHandler(audioPlayer)
         val body = JSONObject().put("id", guild.id).put("owner", guild.owner.user.id)
-        requester.execute(Method.POST, "/servers/add", body, BiConsumer { r, o ->
-            if (r.code() == 200) {
-                // :ok_hand:
-            }
-            if (r.code() == 400) {
-                // todo if server already exists, load in songs
-            }
-        }, Consumer { e -> throw e })
+        val r = requester.execute(Method.POST, "/servers/add", body)
+        if (r.code() == 200) {
+            // :ok_hand:
+        } else if (r.code() == 400) {
+            // todo if server already exists, load in songs
+        } else {
+            // todo handle
+        }
+        r.close()
     }
 
-    fun open(channel: VoiceChannel) {
-        throw UnsupportedOperationException()
+    fun open(voiceChannel: VoiceChannel) {
+        val audioManager = guild.audioManager
+        if (audioManager.isConnected) {
+            return
+        }
+        audioManager.openAudioConnection(voiceChannel)
+        audioManager.isSelfDeafened = true
+        this.voiceChannel = voiceChannel
+        connected = true
+        updateVoiceChannel()
     }
 
     fun close() {
-        throw UnsupportedOperationException()
+        guild.audioManager.closeAudioConnection()
+        voiceChannel = null
+        connected = false
+        updateVoiceChannel()
+    }
+
+    private fun updateVoiceChannel() {
+        val body = JSONObject().put("voice_channel", voiceChannel?.id)
+        println(body.toString(4))
+        val r = requester.execute(Method.PUT, "/servers/" + guild.id, body)
+        if (r.code() != 200) {
+            // something fucked up
+        }
+        r.close()
     }
 
     fun delete() {
-        requester.execute(Method.DELETE, "/servers/" + guild.id, BiConsumer { r, o ->
-            if (r.code() != 200) {
-                // do something
-            }
-        }, Consumer { e -> throw e })
+        queue?.clear()
+        val r = requester.execute(Method.DELETE, "/servers/" + guild.id)
+        if (r.code() == 200) {
+            // do something
+            queue = null
+        } else {
+            // something fucked up
+        }
+        r.close()
     }
 
-    fun start() {
-        throw UnsupportedOperationException()
+    fun play(song: QueueSong) {
+        if (!connected) {
+            return
+        }
+        audioPlayer.playTrack(song.track)
+        playing = true
     }
 
     fun stop() {
-        throw UnsupportedOperationException()
+        if (!guild.audioManager.isConnected) {
+            return
+        }
+        if (audioPlayer.playingTrack == null) {
+            return
+        }
+        audioPlayer.stopTrack()
+        playing = false
     }
 }

@@ -8,7 +8,7 @@ import net.dv8tion.jda.core.hooks.ListenerAdapter
 import java.util.*
 import java.util.regex.Pattern
 
-class Listener(val commandManager: CommandManager, config: Toml): ListenerAdapter() {
+class Listener(val shard: ShardManager.Shard, val commandManager: CommandManager, config: Toml): ListenerAdapter() {
     val commandPattern: Pattern
 
     init {
@@ -32,7 +32,7 @@ class Listener(val commandManager: CommandManager, config: Toml): ListenerAdapte
         if (matches.size > 0 && matches[0].equals("")) {
             matches = ArrayList<String>(0)
         }
-        val ctx = Command.Context(event, matches)
+        val ctx = Command.Context(shard, event, matches)
         cmd.on(ctx)
     }
 

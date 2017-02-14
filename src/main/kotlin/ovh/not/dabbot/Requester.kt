@@ -1,20 +1,14 @@
 package ovh.not.dabbot
 
 import okhttp3.*
-import org.json.JSONException
 import org.json.JSONObject
-import java.io.IOException
 import java.util.concurrent.TimeUnit
-import java.util.function.BiConsumer
-import java.util.function.Consumer
 
-class Requester {
+class Requester(val baseUrl: String, token: String) {
     val json: MediaType = MediaType.parse("application/json; charset=utf-8")
     val client: OkHttpClient
-    val baseUrl: String
 
-    constructor(baseUrl: String, token: String) {
-        this.baseUrl = baseUrl
+    init {
         this.client = OkHttpClient.Builder()
                 .connectTimeout(3, TimeUnit.SECONDS)
                 .readTimeout(3, TimeUnit.SECONDS)
@@ -42,7 +36,7 @@ class Requester {
                 }.build()
     }
 
-    fun execute(method: Method, url: String, json: JSONObject?, callback: BiConsumer<Response, JSONObject>, errorCallback: Consumer<IOException>) {
+    fun execute(method: Method, url: String, json: JSONObject?): Response {
         var body: RequestBody? = null
         if (json != null) {
             body = RequestBody.create(this.json, json.toString())
@@ -51,28 +45,10 @@ class Requester {
                 .url(baseUrl + url)
                 .method(method.name, body)
                 .build()
-        client.newCall(r).enqueue(object: Callback {
-            override fun onFailure(c: Call, e: IOException) {
-                val m = c.request().method()
-                val p = c.request().url().uri().path
-                println("Failed    $m $p")
-                errorCallback.accept(e)
-            }
-
-            override fun onResponse(c: Call, r: Response) {
-                val o: JSONObject
-                try {
-                    o = JSONObject(r.body().string())
-                } catch (e: JSONException) {
-                    e.printStackTrace()
-                    return
-                }
-                callback.accept(r, o)
-            }
-        })
+        return client.newCall(r).execute()
     }
 
-    fun execute(method: Method, url: String, callback: BiConsumer<Response, JSONObject>, errorCallback: Consumer<IOException>) {
-        execute(method, url, null, callback, errorCallback)
+    fun execute(method: Method, url: String): Response {
+        return execute(method, url, null)
     }
 }
