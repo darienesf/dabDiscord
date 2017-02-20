@@ -15,8 +15,12 @@ class Queue(val requester: Requester, val server: Server) {
 
     fun next(callback: Consumer<QueueSong>) {
         val r = requester.execute(Method.GET, "/queues/$serverId/next")
-        if (r.code() != 200) {
-            // todo
+        if (r.code() == 400) {
+            // no songs left in queue
+            server.stop()
+            server.close()
+            server.playing = false
+            return
         }
         val song = loadSong(JSONObject(r.body().string()).getJSONObject("song"))
         r.close()

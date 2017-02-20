@@ -8,7 +8,7 @@ class AudioPlayerSendHandler(val audioPlayer: AudioPlayer): AudioSendHandler {
     private var lastFrame: AudioFrame? = null
 
     override fun provide20MsAudio(): ByteArray {
-        return lastFrame?.data!!
+        return lastFrame!!.data
     }
 
     override fun canProvide(): Boolean {

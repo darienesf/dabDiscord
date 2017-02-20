@@ -14,6 +14,7 @@ class Server(val requester: Requester, val guild: Guild, val playerManager: Audi
     var connected = false
 
     init {
+        audioPlayer.addListener(TrackScheduler(this))
         guild.audioManager.sendingHandler = AudioPlayerSendHandler(audioPlayer)
         val body = JSONObject().put("id", guild.id).put("owner", guild.owner.user.id)
         val r = requester.execute(Method.POST, "/servers/add", body)
@@ -72,12 +73,16 @@ class Server(val requester: Requester, val guild: Guild, val playerManager: Audi
         if (!connected) {
             return
         }
-        audioPlayer.playTrack(song.track)
-        playing = true
+        if (audioPlayer.startTrack(song.track, false)) {
+            playing = true
+        } else {
+            playing = false
+            close()
+        }
     }
 
     fun stop() {
-        if (!guild.audioManager.isConnected) {
+        if (!connected) {
             return
         }
         if (audioPlayer.playingTrack == null) {

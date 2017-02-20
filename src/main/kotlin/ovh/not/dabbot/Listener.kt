@@ -29,7 +29,7 @@ class Listener(val shard: ShardManager.Shard, val commandManager: CommandManager
         val name = matcher.group(1).toLowerCase()
         val cmd = commandManager.get(name)?: return
         var matches = matcher.group(2).split("\\s+")
-        if (matches.size > 0 && matches[0].equals("")) {
+        if (matches.isNotEmpty() && matches[0] == "") {
             matches = ArrayList<String>(0)
         }
         val ctx = Command.Context(shard, event, matches)

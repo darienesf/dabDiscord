@@ -1,13 +1,17 @@
 package ovh.not.dabbot
 
 import com.moandjiezana.toml.Toml
+import okhttp3.OkHttpClient
 import java.io.File
+import java.util.logging.Level
+import java.util.logging.Logger
 
 val configFileName = "config.toml"
 
 fun main(args: Array<String>) {
+    Logger.getLogger(OkHttpClient::class.java.name).level = Level.FINE
     val config = Toml().read(File(configFileName))
-    if (args.size == 0) {
+    if (args.isEmpty()) {
         ShardManager(config)
     } else {
         val shardCount = Integer.parseInt(args[0])

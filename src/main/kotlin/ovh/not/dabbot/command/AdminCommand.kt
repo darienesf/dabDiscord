@@ -7,7 +7,7 @@ import ovh.not.dabbot.Command
 class AdminCommand(private val config: Toml) : Command("admin", "a") {
     override fun on(ctx: Context) {
         if (!config.getTable("discord").getList<String>("admins").contains(ctx.event.author.id)) return
-        if (ctx.args.size == 0) {
+        if (ctx.args.isEmpty()) {
             ctx.reply("some usage lol")
             return
         }

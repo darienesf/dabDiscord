@@ -5,7 +5,7 @@ import ovh.not.dabbot.LoadResultHandler
 
 class PlayCommand: Command("play", "p", "search", "yt", "youtube") {
     override fun on(ctx: Context) {
-        if (ctx.args.size == 0) {
+        if (ctx.args.isEmpty()) {
             ctx.reply("usage msg lol")
             return
         }
