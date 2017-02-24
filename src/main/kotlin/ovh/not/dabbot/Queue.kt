@@ -17,9 +17,9 @@ class Queue(val requester: Requester, val server: Server) {
         val r = requester.execute(Method.GET, "/queues/$serverId/next")
         if (r.code() == 400) {
             // no songs left in queue
+            r.close()
             server.stop()
             server.close()
-            server.playing = false
             return
         }
         val song = loadSong(JSONObject(r.body().string()).getJSONObject("song"))
@@ -27,10 +27,12 @@ class Queue(val requester: Requester, val server: Server) {
         callback.accept(song)
     }
 
-    fun current(callback: Consumer<QueueSong>) {
+    fun current(callback: Consumer<QueueSong?>) {
         val r = requester.execute(Method.GET, "/queues/$serverId/current")
-        if (r.code() != 200) {
-            // todo
+        if (r.code() == 400) {
+            r.close()
+            callback.accept(null)
+            return
         }
         val song = loadSong(JSONObject(r.body().string()).getJSONObject("song"))
         r.close()

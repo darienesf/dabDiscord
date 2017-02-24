@@ -7,7 +7,7 @@ import net.dv8tion.jda.core.entities.VoiceChannel
 import org.json.JSONObject
 
 class Server(val requester: Requester, val guild: Guild, val playerManager: AudioPlayerManager) {
-    val audioPlayer: AudioPlayer = playerManager.createPlayer()
+    private val audioPlayer: AudioPlayer = playerManager.createPlayer()
     var queue: Queue? = Queue(requester, this)
     var voiceChannel: VoiceChannel? = null
     var playing = false
@@ -43,13 +43,13 @@ class Server(val requester: Requester, val guild: Guild, val playerManager: Audi
     fun close() {
         guild.audioManager.closeAudioConnection()
         voiceChannel = null
+        playing = false
         connected = false
         updateVoiceChannel()
     }
 
     private fun updateVoiceChannel() {
         val body = JSONObject().put("voice_channel", voiceChannel?.id)
-        println(body.toString(4))
         val r = requester.execute(Method.PUT, "/servers/" + guild.id, body)
         if (r.code() != 200) {
             // something fucked up
@@ -75,6 +75,10 @@ class Server(val requester: Requester, val guild: Guild, val playerManager: Audi
         }
         if (audioPlayer.startTrack(song.track, false)) {
             playing = true
+            if (guild.id == "272410239947767808") {
+                val msg = "Now playing **%s** by **%s**".format(song.title, song.author)
+                guild.getTextChannelById("272410331450703873").sendMessage(msg).queue()
+            }
         } else {
             playing = false
             close()
@@ -90,5 +94,29 @@ class Server(val requester: Requester, val guild: Guild, val playerManager: Audi
         }
         audioPlayer.stopTrack()
         playing = false
+    }
+
+    fun isPaused(): Boolean {
+        return audioPlayer.isPaused
+    }
+
+    fun pause() {
+        if (!connected) {
+            return
+        }
+        if (audioPlayer.isPaused) {
+            return
+        }
+        audioPlayer.isPaused = true
+    }
+
+    fun resume() {
+        if (!connected) {
+            return
+        }
+        if (!audioPlayer.isPaused) {
+            return
+        }
+        audioPlayer.isPaused = false
     }
 }

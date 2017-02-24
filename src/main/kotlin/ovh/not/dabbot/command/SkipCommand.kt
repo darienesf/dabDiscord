@@ -9,11 +9,14 @@ class SkipCommand: Command("skip", "s", "next", "n") {
             ctx.reply("You must be in a voice channel!")
             return
         }
-        if (!ctx.server.connected || !ctx.server.playing) {
-            ctx.reply("No music is playing in this guild!")
-            return
+        if (!ctx.server.connected) {
+            ctx.server.open(ctx.getUserVoiceChannel()!!)
         }
         ctx.server.queue!!.next(Consumer { song ->
+            if (ctx.server.isPaused()) {
+                ctx.server.resume()
+                ctx.reply("Music was automatically resumed from being paused! To resume it manually, use `!!!resume`.")
+            }
             ctx.server.play(song)
         })
     }
