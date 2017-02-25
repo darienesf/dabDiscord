@@ -28,7 +28,17 @@ class ResumeCommand: Command("resume", "r", "unpause", "start", "continue") {
                     ctx.server.play(song)
                     ctx.reply("Resumed playing!")
                 } else {
-                    ctx.reply("No song to resume!")
+                    ctx.server.queue!!.next(Consumer { song ->
+                        if (song == null) {
+                            ctx.reply("No song to resume!")
+                        } else {
+                            if (!ctx.server.connected) {
+                                ctx.server.open(ctx.getUserVoiceChannel()!!)
+                            }
+                            ctx.server.play(song)
+                            ctx.reply("Started playing the next song!")
+                        }
+                    })
                 }
             })
         }

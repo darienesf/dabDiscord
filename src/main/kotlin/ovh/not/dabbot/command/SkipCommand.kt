@@ -13,11 +13,15 @@ class SkipCommand: Command("skip", "s", "next", "n") {
             ctx.server.open(ctx.getUserVoiceChannel()!!)
         }
         ctx.server.queue!!.next(Consumer { song ->
-            if (ctx.server.isPaused()) {
-                ctx.server.resume()
-                ctx.reply("Music was automatically resumed from being paused! To resume it manually, use `!!!resume`.")
+            if (song == null) {
+                ctx.reply("The song queue is empty!")
+            } else {
+                if (ctx.server.isPaused()) {
+                    ctx.server.resume()
+                    ctx.reply("Music was automatically resumed from being paused! To resume it manually, use `!!!resume`.")
+                }
+                ctx.server.play(song)
             }
-            ctx.server.play(song)
         })
     }
 }

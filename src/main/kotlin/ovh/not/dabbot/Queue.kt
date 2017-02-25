@@ -20,6 +20,7 @@ class Queue(val requester: Requester, val server: Server) {
             r.close()
             server.stop()
             server.close()
+            callback.accept(null)
             return
         }
         val song = loadSong(JSONObject(r.body().string()).getJSONObject("song"))
