@@ -5,7 +5,6 @@ import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason
-import java.util.function.Consumer
 
 class TrackScheduler(val server: Server): AudioEventAdapter() {
     override fun onTrackStart(player: AudioPlayer?, track: AudioTrack?) {
@@ -15,9 +14,9 @@ class TrackScheduler(val server: Server): AudioEventAdapter() {
         if (!endReason!!.mayStartNext) {
             return
         }
-        server.queue!!.next(Consumer { song ->
-            server.play(song)
-        })
+        server.queue!!.next{ song ->
+            server.play(song!!)
+        }
     }
 
     override fun onPlayerPause(player: AudioPlayer?) {

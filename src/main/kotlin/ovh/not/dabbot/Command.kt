@@ -4,7 +4,8 @@ import net.dv8tion.jda.core.entities.Message
 import net.dv8tion.jda.core.entities.VoiceChannel
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent
 import net.dv8tion.jda.core.exceptions.PermissionException
-import java.util.function.Consumer
+import org.apache.commons.lang3.exception.ExceptionUtils
+import java.util.logging.Logger
 
 abstract class Command(name: String, vararg names: String) {
     val names: Array<String?>
@@ -25,22 +26,18 @@ abstract class Command(name: String, vararg names: String) {
     class Context(val shard: ShardManager.Shard, val event: MessageReceivedEvent, val args: List<String>) {
         val server = shard.serverManager?.getOrCreate(event.guild)!!
 
-        fun reply(message: String, callback: Consumer<Message>?) {
+        fun reply(message: String, callback: ((Message?) -> Unit)?) {
             try {
                 val action = event.textChannel.sendMessage(message)
-                if (callback != null) {
-                    action.queue(callback)
-                } else {
-                    action.queue()
-                }
+                action.queue(callback)
             } catch (e: PermissionException) {
-                // todo send u dont have perms lol
+                // todo
+            } catch (e: Exception) {
+                Logger.getLogger(javaClass.name).warning { ExceptionUtils.getStackTrace(e) }
             }
         }
 
-        fun reply(message: String) {
-            reply(message, null)
-        }
+        fun reply(message: String) = reply(message, null)
 
         fun isUserInVoiceChannel(): Boolean {
             return event.member.voiceState.inVoiceChannel()

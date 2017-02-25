@@ -4,7 +4,6 @@ import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack
-import java.util.function.Consumer
 
 class LoadResultHandler(val ctx: Command.Context, val query: SongQuery): AudioLoadResultHandler {
     override fun noMatches() {
@@ -29,9 +28,9 @@ class LoadResultHandler(val ctx: Command.Context, val query: SongQuery): AudioLo
     override fun trackLoaded(t: AudioTrack) {
         loadTrack(t)
         if (!ctx.server.playing) {
-            ctx.server.queue!!.next(Consumer { s ->
-                ctx.server.play(s)
-            })
+            ctx.server.queue!!.next{ s ->
+                ctx.server.play(s!!)
+            }
         }
     }
 

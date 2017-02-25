@@ -14,6 +14,7 @@ class CommandManager(config: Toml, shard: ShardManager.Shard) {
                 PauseCommand(),
                 PlayCommand(),
                 ResumeCommand(),
+                ShuffleCommand(),
                 SkipCommand()
         )
     }

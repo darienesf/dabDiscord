@@ -1,7 +1,6 @@
 package ovh.not.dabbot
 
 import org.json.JSONObject
-import java.util.function.Consumer
 
 class Queue(val requester: Requester, val server: Server) {
     val serverId: String = server.guild.id
@@ -13,31 +12,31 @@ class Queue(val requester: Requester, val server: Server) {
         return song
     }
 
-    fun next(callback: Consumer<QueueSong>) {
+    fun next(callback: (QueueSong?) -> Unit) {
         val r = requester.execute(Method.GET, "/queues/$serverId/next")
         if (r.code() == 400) {
             // no songs left in queue
             r.close()
             server.stop()
             server.close()
-            callback.accept(null)
+            callback.invoke(null)
             return
         }
         val song = loadSong(JSONObject(r.body().string()).getJSONObject("song"))
         r.close()
-        callback.accept(song)
+        callback.invoke(song)
     }
 
-    fun current(callback: Consumer<QueueSong?>) {
+    fun current(callback: (QueueSong?) -> Unit) {
         val r = requester.execute(Method.GET, "/queues/$serverId/current")
         if (r.code() == 400) {
             r.close()
-            callback.accept(null)
+            callback.invoke(null)
             return
         }
         val song = loadSong(JSONObject(r.body().string()).getJSONObject("song"))
         r.close()
-        callback.accept(song)
+        callback.invoke(song)
     }
 
     fun add(song: QueueSong) {
@@ -66,6 +65,14 @@ class Queue(val requester: Requester, val server: Server) {
 
     fun clear() {
         val r = requester.execute(Method.DELETE, "/queues/$serverId/clear")
+        if (r.code() != 200) {
+            // todo
+        }
+        r.close()
+    }
+
+    fun shuffle() {
+        val r = requester.execute(Method.GET, "/queues/$serverId/shuffle")
         if (r.code() != 200) {
             // todo
         }

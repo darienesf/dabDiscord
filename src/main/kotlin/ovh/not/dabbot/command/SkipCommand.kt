@@ -1,9 +1,8 @@
 package ovh.not.dabbot.command
 
 import ovh.not.dabbot.Command
-import java.util.function.Consumer
 
-class SkipCommand: Command("skip", "s", "next", "n") {
+class SkipCommand: Command("skip", "s", "next", "n", "sk") {
     override fun on(ctx: Context) {
         if (!ctx.isUserInVoiceChannel()) {
             ctx.reply("You must be in a voice channel!")
@@ -12,7 +11,7 @@ class SkipCommand: Command("skip", "s", "next", "n") {
         if (!ctx.server.connected) {
             ctx.server.open(ctx.getUserVoiceChannel()!!)
         }
-        ctx.server.queue!!.next(Consumer { song ->
+        ctx.server.queue!!.next{ song ->
             if (song == null) {
                 ctx.reply("The song queue is empty!")
             } else {
@@ -22,6 +21,6 @@ class SkipCommand: Command("skip", "s", "next", "n") {
                 }
                 ctx.server.play(song)
             }
-        })
+        }
     }
 }
