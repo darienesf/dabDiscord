@@ -7,11 +7,16 @@
     <artifactId>dabbot</artifactId>
     <version>1.0</version>
     <properties>
-        <kotlin.version>1.0.6</kotlin.version>
+        <kotlin.version>1.1.0-rc-91</kotlin.version>
         <main.class>ovh.not.dabbot.MainKt</main.class>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <repositories>
+        <repository>
+            <id>ext</id>
+            <name>kotlin-eap</name>
+            <url>http://dl.bintray.com/kotlin/kotlin-eap-1.1</url>
+        </repository>
         <repository>
             <id>central</id>
             <name>bintray</name>
