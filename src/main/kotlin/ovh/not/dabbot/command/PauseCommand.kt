@@ -8,6 +8,10 @@ class PauseCommand: Command("pause", "halt", "break") {
             ctx.reply("Must be in a voice channel!")
             return
         }
+        if (!ctx.server.playing) {
+            ctx.reply("No music is playing!")
+            return
+        }
         if (ctx.server.isPaused()) {
             ctx.reply("Music is already paused! To resume playback it, use `!!!resume`.")
             return

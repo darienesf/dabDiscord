@@ -48,7 +48,7 @@ class ShardManager {
     }
 
     class Shard(val manager: ShardManager) {
-        var shard: Int = 0
+        var id: Int = 0
         var jda: JDA? = null
         var commandManager: CommandManager? = null
         var listener: Listener? = null
@@ -60,13 +60,13 @@ class ShardManager {
             create()
         }
 
-        constructor(manager: ShardManager, shard: Int): this(manager) {
-            this.shard = shard
+        constructor(manager: ShardManager, id: Int): this(manager) {
+            this.id = id
         }
 
         fun create() {
-            println("Starting shard $shard...")
-            commandManager = CommandManager(manager.config, this)
+            println("Starting shard $id...")
+            commandManager = CommandManager(manager.config)
             listener = Listener(this, commandManager!!, manager.config)
             playerManager = DefaultAudioPlayerManager()
             AudioSourceManagers.registerRemoteSources(playerManager)
@@ -76,7 +76,7 @@ class ShardManager {
             val builder = JDABuilder(AccountType.BOT).setToken(manager.token).addListener(listener)
                     .setAudioEnabled(true)
             if (manager.useSharding) {
-                builder.useSharding(shard, manager.shardCount)
+                builder.useSharding(id, manager.shardCount)
             }
             try {
                 jda = builder.buildBlocking()
@@ -89,10 +89,10 @@ class ShardManager {
         }
 
         fun restart() {
-            println("Shutting down shard $shard...")
+            println("Shutting down shard $id...")
             jda?.shutdown(false)
             create()
-            System.out.println("Shard $shard restarted!")
+            System.out.println("Shard $id restarted!")
         }
     }
 }

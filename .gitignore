@@ -1,4 +1,4 @@
 .idea
 dabBotKotlin.iml
 config.toml
-lib
+target

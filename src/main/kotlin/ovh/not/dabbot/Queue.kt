@@ -12,6 +12,29 @@ class Queue(val requester: Requester, val server: Server) {
         return song
     }
 
+    fun list(callback: (List<QueueSong>?) -> Unit) {
+        val r = requester.execute(Method.GET, "/queues/$serverId")
+        if (r.code() == 400) {
+            r.close()
+            callback(null)
+            return
+        }
+        val array = JSONObject(r.body().string()).getJSONArray("songs")
+        r.close()
+        if (array.length() == 0) {
+            callback(null)
+            return
+        }
+        val songs = ArrayList<QueueSong>(array.length())
+        var i = 0
+        while (i < array.length()) {
+            val song = QueueSong(array.getJSONObject(i))
+            songs.add(song)
+            i++
+        }
+        callback(songs)
+    }
+
     fun next(callback: (QueueSong?) -> Unit) {
         val r = requester.execute(Method.GET, "/queues/$serverId/next")
         if (r.code() == 400) {
@@ -19,25 +42,36 @@ class Queue(val requester: Requester, val server: Server) {
             r.close()
             server.stop()
             server.close()
-            callback.invoke(null)
+            callback(null)
             return
         }
         val song = loadSong(JSONObject(r.body().string()).getJSONObject("song"))
         r.close()
-        callback.invoke(song)
+        callback(song)
     }
 
     fun current(callback: (QueueSong?) -> Unit) {
         val r = requester.execute(Method.GET, "/queues/$serverId/current")
         if (r.code() == 400) {
             r.close()
-            callback.invoke(null)
+            callback(null)
             return
         }
         val song = loadSong(JSONObject(r.body().string()).getJSONObject("song"))
         r.close()
-        callback.invoke(song)
+        callback(song)
     }
+
+    /*suspend fun current(): QueueSong? {
+        val r = requester.execute(Method.GET, "/queues/$serverId/current")
+        if (r.code() == 400) {
+            r.close()
+            return null
+        }
+        val song = loadSong(JSONObject(r.body().string()).getJSONObject("song"))
+        r.close()
+        return song
+    }*/
 
     fun add(song: QueueSong) {
         val r = requester.execute(Method.POST, "/queues/$serverId/add", song.toJson())

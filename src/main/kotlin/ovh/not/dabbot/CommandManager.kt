@@ -4,18 +4,21 @@ import com.moandjiezana.toml.Toml
 import ovh.not.dabbot.command.*
 import java.util.*
 
-class CommandManager(config: Toml, shard: ShardManager.Shard) {
+class CommandManager(config: Toml) {
     val commands: MutableMap<String, Command> = HashMap()
 
     init {
         register(
                 AdminCommand(config),
                 ClearCommand(),
+                DebugCommand(),
                 PauseCommand(),
                 PlayCommand(),
+                QueueCommand(),
                 ResumeCommand(),
                 ShuffleCommand(),
-                SkipCommand()
+                SkipCommand(),
+                StopCommand()
         )
     }
 

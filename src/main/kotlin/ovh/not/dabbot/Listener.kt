@@ -5,6 +5,7 @@ import net.dv8tion.jda.core.events.guild.GuildJoinEvent
 import net.dv8tion.jda.core.events.guild.GuildLeaveEvent
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent
 import net.dv8tion.jda.core.hooks.ListenerAdapter
+import java.net.ConnectException
 import java.util.*
 import java.util.regex.Pattern
 
@@ -32,8 +33,13 @@ class Listener(val shard: ShardManager.Shard, val commandManager: CommandManager
         if (matches.isNotEmpty() && matches[0] == "") {
             matches = ArrayList<String>(0)
         }
-        val ctx = Command.Context(shard, event, matches)
-        cmd.on(ctx)
+        try {
+            val ctx = Command.Context(shard, event, matches)
+            cmd.on(ctx)
+        } catch (e: ConnectException) {
+            event.textChannel.sendMessage("Could not communicate with dabBot gateway!").queue()
+            e.printStackTrace()
+        }
     }
 
     override fun onGuildJoin(event: GuildJoinEvent?) {

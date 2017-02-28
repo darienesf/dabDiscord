@@ -28,4 +28,3 @@ class AdminCommand(private val config: Toml) : Command("admin", "a") {
         }
     }
 }
-
