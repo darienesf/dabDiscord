@@ -8,11 +8,9 @@ import org.apache.commons.lang3.exception.ExceptionUtils
 import java.util.logging.Logger
 
 abstract class Command(name: String, vararg names: String) {
-    val names: Array<String?>
-    var hide = false
+    val names: Array<String?> = kotlin.arrayOfNulls<String?>(names.size + 1)
 
     init {
-        this.names = kotlin.arrayOfNulls<String?>(names.size + 1)
         this.names[0] = name
         var i = 1
         for (n in names) {

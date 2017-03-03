@@ -8,7 +8,7 @@ class AdminCommand(private val config: Toml) : Command("admin", "a") {
     override fun on(ctx: Context) {
         if (!config.getTable("discord").getList<String>("admins").contains(ctx.event.author.id)) return
         if (ctx.args.isEmpty()) {
-            ctx.reply("some usage lol")
+            ctx.reply("stop, open, close")
             return
         }
         when (ctx.args[0].toLowerCase()) {

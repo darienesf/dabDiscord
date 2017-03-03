@@ -2,7 +2,7 @@ package ovh.not.dabbot.command
 
 import ovh.not.dabbot.Command
 
-class ResumeCommand: Command("resume", "r", "unpause", "start", "continue", "unhalt") {
+class ResumeCommand: Command("resume", "r", "unpause", "start", "continue", "unhalt", "resum") {
     override fun on(ctx: Context) {
         if (!ctx.isUserInVoiceChannel()) {
             ctx.reply("You must be in a voice channel!")

@@ -14,7 +14,7 @@ class ShardManager {
     val shards: Array<Shard?>
     private val useSharding: Boolean
     private val shardCount: Int
-    private val config: Toml
+    val config: Toml
     private val token: String
     private val game: String
 
@@ -72,7 +72,7 @@ class ShardManager {
             AudioSourceManagers.registerRemoteSources(playerManager)
             val apiTable = manager.config.getTable("api")
             requester = Requester(apiTable.getString("url"), apiTable.getString("token"))
-            serverManager = ServerManager(requester!!, playerManager!!)
+            serverManager = ServerManager(manager, requester!!, playerManager!!)
             val builder = JDABuilder(AccountType.BOT).setToken(manager.token).addListener(listener)
                     .setAudioEnabled(true)
             if (manager.useSharding) {

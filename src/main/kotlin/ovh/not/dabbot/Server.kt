@@ -7,9 +7,10 @@ import net.dv8tion.jda.core.entities.User
 import net.dv8tion.jda.core.entities.VoiceChannel
 import org.json.JSONObject
 
-class Server(val requester: Requester, val guild: Guild, val playerManager: AudioPlayerManager) {
+class Server(val manager: ServerManager, val requester: Requester, val guild: Guild, val playerManager: AudioPlayerManager) {
     val audioPlayer: AudioPlayer = playerManager.createPlayer()
     var queue: Queue? = Queue(requester, this)
+    val properties: ServerProperties = ServerProperties(requester, this)
     var voiceChannel: VoiceChannel? = null
     val selectors: MutableMap<User, Selector<Song>> = HashMap()
     var playing = false

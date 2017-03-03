@@ -6,11 +6,11 @@ import net.dv8tion.jda.core.events.guild.GuildLeaveEvent
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent
 import net.dv8tion.jda.core.hooks.ListenerAdapter
 import java.net.ConnectException
-import java.util.*
 import java.util.regex.Pattern
 
 class Listener(val shard: ShardManager.Shard, val commandManager: CommandManager, config: Toml): ListenerAdapter() {
     val commandPattern: Pattern
+    val splittingRegex = Regex("\\s+")
 
     init {
         val propertiesConfig = config.getTable("properties")
@@ -29,7 +29,7 @@ class Listener(val shard: ShardManager.Shard, val commandManager: CommandManager
         }
         val name = matcher.group(1).toLowerCase()
         val cmd = commandManager.get(name)?: return
-        var matches = matcher.group(2).split("\\s+")
+        var matches = matcher.group(2).split(splittingRegex)
         if (matches.isNotEmpty() && matches[0] == "") {
             matches = ArrayList<String>(0)
         }

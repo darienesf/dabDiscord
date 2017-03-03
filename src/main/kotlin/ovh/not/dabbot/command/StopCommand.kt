@@ -9,6 +9,7 @@ class StopCommand: Command("stop", "end", "disconnect", "close", "dc", "leave") 
             return
         }
         ctx.server.stop()
+        ctx.server.close()
         ctx.reply("Music stopped! :warning: **THIS NO LONGER CLEARS THE SONG QUEUE!** Use `!!!clear` to do this.")
     }
 }
