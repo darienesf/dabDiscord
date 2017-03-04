@@ -20,7 +20,7 @@ class Server(val manager: ServerManager, val requester: Requester, val guild: Gu
         audioPlayer.addListener(TrackScheduler(this))
         guild.audioManager.sendingHandler = AudioPlayerSendHandler(audioPlayer)
         val body = JSONObject().put("id", guild.id).put("owner", guild.owner.user.id)
-        val r = requester.execute(Method.POST, "/servers/add", body)
+        val r = requester.executeJSON(Method.POST, "/servers/add", body)
         if (r.code() == 200) {
             // :ok_hand:
         } else if (r.code() == 400) {
@@ -53,7 +53,7 @@ class Server(val manager: ServerManager, val requester: Requester, val guild: Gu
 
     private fun updateVoiceChannel() {
         val body = JSONObject().put("voice_channel", voiceChannel?.id)
-        val r = requester.execute(Method.PUT, "/servers/" + guild.id, body)
+        val r = requester.executeJSON(Method.PUT, "/servers/" + guild.id, body)
         if (r.code() != 200) {
             // something fucked up
         }

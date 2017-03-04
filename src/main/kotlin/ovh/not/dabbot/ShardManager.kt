@@ -8,6 +8,7 @@ import net.dv8tion.jda.core.AccountType
 import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.JDABuilder
 import net.dv8tion.jda.core.entities.Game
+import org.json.JSONObject
 import javax.security.auth.login.LoginException
 
 class ShardManager {
@@ -25,7 +26,7 @@ class ShardManager {
         this.game = discordConfig.getString("game")
         shards = kotlin.arrayOfNulls<Shard>(1)
         useSharding = false
-        shardCount = 0
+        shardCount = 1
         shards[0] = Shard(this)
     }
 
@@ -93,6 +94,30 @@ class ShardManager {
             jda?.shutdown(false)
             create()
             System.out.println("Shard $id restarted!")
+        }
+
+        fun updateStatistics() {
+            val serverCount = jda!!.guilds.size
+            var userCount = 0
+            var connectionCount = 0
+            jda!!.guilds.forEach { guild ->
+                userCount += guild.members.size
+                if (guild.audioManager.isConnected) {
+                    connectionCount++
+                }
+            }
+            val r = requester!!.executeJSON(Method.PUT, "/statistics/$id", JSONObject()
+                    .put("shard_id", id)
+                    .put("shard_count", manager.shardCount)
+                    .put("server_count", serverCount)
+                    .put("user_count", userCount)
+                    .put("connection_count", connectionCount))
+            if (r.code() != 200) {
+                r.close()
+                // do something
+                return
+            }
+            r.close()
         }
     }
 }

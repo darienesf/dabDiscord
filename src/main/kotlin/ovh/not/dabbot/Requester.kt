@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit
 
 class Requester(val baseUrl: String, token: String) {
     val json: MediaType = MediaType.parse("application/json; charset=utf-8")
+    val plainText: MediaType = MediaType.parse("text/plain; charset=utf-8")
     val client: OkHttpClient
 
     init {
@@ -36,16 +37,22 @@ class Requester(val baseUrl: String, token: String) {
                 }.build()
     }
 
-    fun execute(method: Method, url: String, json: JSONObject?): Response {
-        var body: RequestBody? = null
-        if (json != null) {
-            body = RequestBody.create(this.json, json.toString())
-        }
+    fun execute(method: Method, url: String, body: RequestBody?): Response {
         val r = Request.Builder()
                 .url(baseUrl + url)
                 .method(method.name, body)
                 .build()
         return client.newCall(r).execute()
+    }
+
+    fun executePlainText(method: Method, url: String, str: String): Response {
+        val body = RequestBody.create(this.plainText, str)
+        return execute(method, url, body)
+    }
+
+    fun executeJSON(method: Method, url: String, json: JSONObject): Response {
+        val body = RequestBody.create(this.json, json.toString())
+        return execute(method, url, body)
     }
 
     fun execute(method: Method, url: String): Response {

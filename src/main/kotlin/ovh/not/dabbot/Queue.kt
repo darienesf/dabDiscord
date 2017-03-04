@@ -74,7 +74,7 @@ class Queue(val requester: Requester, val server: Server) {
     }*/
 
     fun add(song: QueueSong) {
-        val r = requester.execute(Method.POST, "/queues/$serverId/add", song.toJson())
+        val r = requester.executeJSON(Method.POST, "/queues/$serverId/add", song.toJson())
         if (r.code() != 200) {
             // todo
         }
@@ -90,7 +90,7 @@ class Queue(val requester: Requester, val server: Server) {
         val body = JSONObject()
                 .put("song_id", song.id)
                 .put("position", position)
-        val r = requester.execute(Method.PUT, "/queues/$serverId/move", body)
+        val r = requester.executeJSON(Method.PUT, "/queues/$serverId/move", body)
         if (r.code() != 200) {
             // todo
         }

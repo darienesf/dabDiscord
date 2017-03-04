@@ -10,11 +10,13 @@ import java.util.regex.Pattern
 
 class Listener(val shard: ShardManager.Shard, val commandManager: CommandManager, config: Toml): ListenerAdapter() {
     val commandPattern: Pattern
+    val developerMode: Boolean
     val splittingRegex = Regex("\\s+")
 
     init {
         val propertiesConfig = config.getTable("properties")
         commandPattern = Pattern.compile(propertiesConfig.getString("regex"))
+        developerMode = propertiesConfig.getBoolean("developerMode")
     }
 
     override fun onMessageReceived(event: MessageReceivedEvent) {
@@ -43,10 +45,12 @@ class Listener(val shard: ShardManager.Shard, val commandManager: CommandManager
     }
 
     override fun onGuildJoin(event: GuildJoinEvent?) {
-
+        if (developerMode) return
+        shard.updateStatistics()
     }
 
     override fun onGuildLeave(event: GuildLeaveEvent?) {
-
+        if (developerMode) return
+        shard.updateStatistics()
     }
 }
