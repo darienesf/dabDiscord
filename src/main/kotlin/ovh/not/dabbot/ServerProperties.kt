@@ -1,21 +1,29 @@
 package ovh.not.dabbot
 
+import org.json.JSONObject
+
 class ServerProperties(val requester: Requester, val server: Server) {
     fun invalidateCache() {
     }
 
-    fun getProperty(property: String, callback: (String?) -> Unit) {
+    fun get(property: String, callback: (String?) -> Unit) {
         val r = requester.execute(Method.GET, "/properties/${server.guild.id}/$property")
         if (r.code() != 200) {
             r.close()
             callback(null)
             return
         }
-        callback(r.body().string())
+        val json = JSONObject(r.body().string())
         r.close()
+        if (json.isNull("error")) {
+            callback(json.getJSONObject("property").getString("value"))
+        } else {
+            callback(null)
+            println("properties#get error $property: ${json.getString("error")}")
+        }
     }
 
-    fun setProperty(property: String, value: String, callback: () -> Unit) {
+    fun set(property: String, value: String, callback: () -> Unit) {
         val r = requester.executePlainText(Method.PUT, "/properties/${server.guild.id}/$property", value)
         if (r.code() != 200) {
             // o shit dude do something
@@ -23,19 +31,4 @@ class ServerProperties(val requester: Requester, val server: Server) {
         r.close()
         callback()
     }
-
-    /*fun getPrefix(callback: (String) -> Unit) {
-        if (prefix != null) {
-            callback(prefix!!)
-            return
-        }
-        getProperty("prefix", { value ->
-            if (value == null) {
-                prefix = defaultPrefix
-            } else {
-                prefix = value
-            }
-            callback(prefix!!)
-        })
-    }*/
 }

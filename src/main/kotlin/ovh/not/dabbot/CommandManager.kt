@@ -16,6 +16,7 @@ class CommandManager(config: Toml) {
                 PlayCommand(),
                 QueueCommand(),
                 ReorderCommand(),
+                RepeatCommand(),
                 RestartCommand(),
                 ResumeCommand(),
                 ShuffleCommand(),

@@ -14,9 +14,16 @@ class TrackScheduler(val server: Server): AudioEventAdapter() {
         if (!endReason!!.mayStartNext) {
             return
         }
-        server.queue!!.next{ song ->
-            server.play(song!!)
-        }
+        server.properties.get("repeat", { repeat ->
+            if (repeat != null && repeat == "true" && track != null) {
+                val newTrack = track.makeClone()
+                player!!.playTrack(newTrack)
+            } else {
+                server.queue!!.next{ song ->
+                    server.play(song!!)
+                }
+            }
+        })
     }
 
     override fun onPlayerPause(player: AudioPlayer?) {
