@@ -24,6 +24,10 @@ abstract class Command(name: String, vararg names: String) {
     class Context(val shard: ShardManager.Shard, val event: MessageReceivedEvent, val args: List<String>) {
         val server = shard.serverManager?.getOrCreate(event.guild)!!
 
+        init {
+            server.lastTextChannel = event.textChannel
+        }
+
         fun reply(message: String, callback: ((Message?) -> Unit)?) {
             try {
                 val action = event.textChannel.sendMessage(message)

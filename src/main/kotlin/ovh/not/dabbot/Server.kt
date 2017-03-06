@@ -3,6 +3,7 @@ package ovh.not.dabbot
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager
 import net.dv8tion.jda.core.entities.Guild
+import net.dv8tion.jda.core.entities.TextChannel
 import net.dv8tion.jda.core.entities.User
 import net.dv8tion.jda.core.entities.VoiceChannel
 import org.json.JSONObject
@@ -15,6 +16,7 @@ class Server(val manager: ServerManager, val requester: Requester, val guild: Gu
     val selectors: MutableMap<User, Selector<Song>> = HashMap()
     var playing = false
     var connected = false
+    var lastTextChannel: TextChannel? = null
 
     init {
         audioPlayer.addListener(TrackScheduler(this))
@@ -78,10 +80,28 @@ class Server(val manager: ServerManager, val requester: Requester, val guild: Gu
         }
         if (audioPlayer.startTrack(song.track, false)) {
             playing = true
-            if (guild.id == "272410239947767808") {
+
+            properties.get("announcements", { result ->
+                val json = JSONObject(result)
                 val msg = "Now playing **%s** by **%s**".format(song.title, song.author)
-                guild.getTextChannelById("272410331450703873").sendMessage(msg).queue()
-            }
+                when (json.getString("type")) {
+                    "normal" -> {
+                        val channel: TextChannel
+                        if (lastTextChannel == null) {
+                            channel = guild.publicChannel
+                        } else {
+                            channel = lastTextChannel!!
+                        }
+                        channel.sendMessage(msg).queue()
+                    }
+                    "channel" -> {
+                        val channelId = json.getString("channel")
+                        val channel = guild.getTextChannelById(channelId)
+                        channel.sendMessage(msg).queue()
+                    }
+                    "none" -> {}
+                }
+            })
         } else {
             playing = false
             close()

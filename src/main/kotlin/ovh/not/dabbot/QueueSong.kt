@@ -4,6 +4,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager
 import com.sedmelluq.discord.lavaplayer.tools.io.MessageInput
 import com.sedmelluq.discord.lavaplayer.tools.io.MessageOutput
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack
+import org.apache.commons.lang3.time.DurationFormatUtils
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 import java.util.*
@@ -18,7 +19,7 @@ class QueueSong: Song {
     override val title: String?
     override val author: String?
     override val duration: Long?
-    override var track: AudioTrack? = null // todo
+    override var track: AudioTrack? = null
 
     constructor(o: JSONObject) {
         this.id = o.getLong("id")
@@ -94,4 +95,12 @@ class QueueSong: Song {
                 .put("author", author)
                 .put("duration", duration)
     }
+
+    fun formatDuration(duration: Long, format: String): String {
+        return DurationFormatUtils.formatDuration(duration, format)
+    }
+
+    fun getFormattedDuration() = formatDuration(duration!!, "mm:ss")
+
+    fun getLongFormattedDuration() = formatDuration(duration!!, "HH:mm:ss")
 }

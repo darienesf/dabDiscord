@@ -28,6 +28,7 @@ class TrackScheduler(val server: Server): AudioEventAdapter() {
 
     override fun onPlayerPause(player: AudioPlayer?) {
     }
+
     override fun onPlayerResume(player: AudioPlayer?) {
     }
 
