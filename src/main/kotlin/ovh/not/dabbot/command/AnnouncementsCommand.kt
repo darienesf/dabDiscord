@@ -7,7 +7,11 @@ import ovh.not.dabbot.Command
 class AnnouncementsCommand: Command("announcements", "anouncements", "announcement", "setmusic", "setchannel", "musicchannel", "musicchanel", "annoncements") {
     override fun on(ctx: Context) {
         if (ctx.args.isEmpty()) {
-            ctx.reply("todo")
+            ctx.reply("This command is for setting up dabBot's announcement messages!" +
+                    "\nUsage: `!!!announcements <normal/channel/none>`" +
+                    "\n**normal**: announce songs in the channel the last command was ran in" +
+                    "\n**channel**: announce in a specific channel" +
+                    "\n**none**: no announcements")
             return
         }
         val json = JSONObject()
@@ -15,7 +19,7 @@ class AnnouncementsCommand: Command("announcements", "anouncements", "announceme
             "normal" -> {}
             "channel" -> {
                 if (ctx.args.size != 2) {
-                    ctx.reply("todo 2")
+                    ctx.reply("Usage: `!!!announcements channel <channel name>`\nExample: `!!!announcements channel #music-log`")
                     return
                 }
                 var name = ctx.args[1]
@@ -38,7 +42,11 @@ class AnnouncementsCommand: Command("announcements", "anouncements", "announceme
             }
             "none" -> {}
             else -> {
-                ctx.reply("todo 3")
+                ctx.reply("This command is for setting up dabBot's announcement messages!" +
+                        "\nUsage: `!!!announcements <normal/channel/none>`" +
+                        "\n`normal`: announce songs in the current channel" +
+                        "\n`channel`: announce songs in the specified channel" +
+                        "\n`none`: no announcements")
                 return
             }
         }
