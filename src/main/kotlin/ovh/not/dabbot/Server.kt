@@ -80,10 +80,9 @@ class Server(val manager: ServerManager, val requester: Requester, val guild: Gu
         }
         if (audioPlayer.startTrack(song.track, false)) {
             playing = true
-
             properties.get("announcements", { result ->
                 val json = JSONObject(result)
-                val msg = "Now playing **%s** by **%s**".format(song.title, song.author)
+                val msg = "Now playing **${song.title}** by **${song.author}** `[${song.getFormattedDuration()}]`"
                 when (json.getString("type")) {
                     "normal" -> {
                         val channel: TextChannel

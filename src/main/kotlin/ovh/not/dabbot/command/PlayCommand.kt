@@ -3,7 +3,7 @@ package ovh.not.dabbot.command
 import ovh.not.dabbot.Command
 import ovh.not.dabbot.LoadResultHandler
 
-class PlayCommand: Command("play", "p", "search", "yt", "youtube", "lookup", "find") {
+class PlayCommand: Command("play", "p", "search", "yt", "youtube", "lookup", "find", "sing") {
     override fun on(ctx: Context) {
         if (ctx.args.isEmpty()) {
             ctx.reply("usage msg lol")

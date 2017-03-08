@@ -2,7 +2,7 @@ package ovh.not.dabbot.command
 
 import ovh.not.dabbot.Command
 
-class RepeatCommand: Command("repeat", "repeatsong", "rs") {
+class RepeatCommand: Command("repeat", "repeatsong", "rs", "loop", "cycle") {
     override fun on(ctx: Context) {
         if (ctx.args.isEmpty()) {
             ctx.reply("Usage: `!!!repeat <song/queue>`\n`song` = repeat just this song." +
