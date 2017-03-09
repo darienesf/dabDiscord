@@ -5,6 +5,7 @@ import net.dv8tion.jda.core.events.guild.GuildJoinEvent
 import net.dv8tion.jda.core.events.guild.GuildLeaveEvent
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent
 import net.dv8tion.jda.core.hooks.ListenerAdapter
+import org.json.JSONArray
 import java.net.ConnectException
 import java.util.regex.Pattern
 
@@ -37,7 +38,17 @@ class Listener(val shard: ShardManager.Shard, val commandManager: CommandManager
         }
         try {
             val ctx = Command.Context(shard, event, matches)
-            cmd.on(ctx)
+            ctx.server.properties.get("channelignore", { result ->
+                if (result != null) {
+                    val json = JSONArray(result)
+                    for (s in json) {
+                        if (s == event.textChannel.id) {
+                            return@get
+                        }
+                    }
+                }
+                cmd.on(ctx)
+            })
         } catch (e: ConnectException) {
             event.textChannel.sendMessage("Could not communicate with dabBot gateway!").queue()
             e.printStackTrace()

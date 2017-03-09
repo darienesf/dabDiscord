@@ -9,10 +9,14 @@ class CommandManager(config: Toml) {
 
     init {
         register(
+                AboutCommand(),
                 AdminCommand(config),
                 AnnouncementsCommand(),
                 ClearCommand(),
                 DebugCommand(),
+                HelpCommand(),
+                IgnoreCommand(),
+                InviteCommand(),
                 NowPlayingCommand(),
                 PauseCommand(),
                 PlayCommand(),
