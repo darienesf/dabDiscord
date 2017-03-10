@@ -38,7 +38,23 @@ class LoadResultHandler(val ctx: Command.Context, val query: SongQuery): AudioLo
         if (p.selectedTrack != null) {
             trackLoaded(p.selectedTrack)
         } else if (p.isSearchResult) {
-
+            val list = ArrayList<SelectorItem>()
+            p.tracks.forEach { t ->
+                val song = QueueSong(t.info.title, t.info.author, t.duration, t)
+                list.add(song)
+            }
+            val selector = Selector(list, { found, item ->
+                ctx.server.selectors.remove(ctx.event.author)
+                if (!found) {
+                    ctx.reply("Selection cancelled!")
+                    return@Selector
+                }
+                if (item is Song) {
+                    trackLoaded(item.track!!)
+                }
+            }, 5)
+            ctx.server.selectors[ctx.event.author] = selector
+            ctx.reply(selector.display())
         } else {
             p.tracks.forEach { t -> loadTrack(t) }
             // todo added %d songs to queue

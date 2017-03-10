@@ -4,7 +4,6 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager
 import com.sedmelluq.discord.lavaplayer.tools.io.MessageInput
 import com.sedmelluq.discord.lavaplayer.tools.io.MessageOutput
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack
-import org.apache.commons.lang3.time.DurationFormatUtils
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 import java.util.*
@@ -33,18 +32,17 @@ class QueueSong: Song {
         this.duration = o.getLong("duration")
     }
 
-    constructor(addedBy: String, dateAdded: Date, source: String, identifier: String,
-                encoded: String, title: String, author: String, duration: Long) {
-        this.id = null // todo
-        this.addedBy = addedBy
-        this.dateAdded = dateAdded
-        this.source = source
-        this.identifier = identifier
-        this.encoded = encoded
+    constructor(title: String, author: String, duration: Long, track: AudioTrack) {
+        this.id = null
+        this.addedBy = null
+        this.dateAdded = null
+        this.source = null
+        this.identifier = null
+        this.encoded = null
         this.title = title
         this.author = author
         this.duration = duration
-        this.track = null // todo
+        this.track = track
     }
 
     constructor(requester: Requester, id: Long) {
@@ -95,12 +93,4 @@ class QueueSong: Song {
                 .put("author", author)
                 .put("duration", duration)
     }
-
-    fun formatDuration(duration: Long, format: String): String {
-        return DurationFormatUtils.formatDuration(duration, format)
-    }
-
-    fun getFormattedDuration() = formatDuration(duration!!, "mm:ss")
-
-    fun getLongFormattedDuration() = formatDuration(duration!!, "HH:mm:ss")
 }

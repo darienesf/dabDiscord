@@ -12,6 +12,7 @@ class CommandManager(config: Toml) {
                 AboutCommand(),
                 AdminCommand(config),
                 AnnouncementsCommand(),
+                ChooseCommand(),
                 ClearCommand(),
                 DebugCommand(),
                 HelpCommand(),
@@ -25,6 +26,7 @@ class CommandManager(config: Toml) {
                 RepeatCommand(),
                 RestartCommand(),
                 ResumeCommand(),
+                SeekCommand(),
                 ShuffleCommand(),
                 SkipCommand(),
                 StopCommand()
