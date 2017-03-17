@@ -117,14 +117,15 @@ class ServerPermissions(val requester: Requester, val server: Server) {
         REORDER         (1 shl 16),
         REPEAT          (1 shl 17),
         ROLES           (1 shl 18),
-        ANNOUNCEMENTS   (1 shl 19),
+        ANNOUNCEMENTS   (1 shl 19)
+    }
 
-        GROUP_INFO(ABOUT.bits or HELP.bits or INVITE.bits or DEBUG.bits),
-        GROUP_CURRENT(NOW_PLAYING.bits or QUEUE.bits),
-        GROUP_PLAY(PLAY.bits),
-        GROUP_RADIO(DISCORD_FM.bits or RADIO.bits),
-        GROUP_MODERATION(PAUSE.bits or RESUME.bits or SEEK.bits or RESTART.bits or SKIP.bits or CLEAR.bits
-                or SHUFFLE.bits or REORDER.bits or REPEAT.bits or ROLES.bits or ANNOUNCEMENTS.bits)
+    enum class PermissionGroups(val bits: Int) {
+        INFO(Permission.ABOUT.bits or Permission.HELP.bits or Permission.INVITE.bits or Permission.DEBUG.bits),
+        CURRENT(Permission.NOW_PLAYING.bits or Permission.QUEUE.bits),
+        PLAY(Permission.PLAY.bits),
+        RADIO(Permission.DISCORD_FM.bits or Permission.RADIO.bits),
+        MODERATION(Permission.PAUSE.bits or Permission.RESUME.bits or Permission.SEEK.bits or Permission.RESTART.bits or Permission.SKIP.bits or Permission.CLEAR.bits or Permission.SHUFFLE.bits or Permission.REORDER.bits or Permission.REPEAT.bits or Permission.ROLES.bits or Permission.ANNOUNCEMENTS.bits)
     }
 
     class Role(val role: String, var value: Int) {
@@ -138,6 +139,16 @@ class ServerPermissions(val requester: Requester, val server: Server) {
 
         fun unset(perm: Permission) {
             value = value and perm.bits.inv()
+        }
+
+        fun permissions(): List<Permission> {
+            val list = ArrayList<Permission>()
+            Permission.values().forEach { permission ->
+                if (has(permission)) {
+                    list.add(permission)
+                }
+            }
+            return list
         }
     }
 }

@@ -26,6 +26,7 @@ class CommandManager(config: Toml) {
                 RepeatCommand(),
                 RestartCommand(),
                 ResumeCommand(),
+                RolesCommand(),
                 SeekCommand(),
                 ShuffleCommand(),
                 SkipCommand(),
