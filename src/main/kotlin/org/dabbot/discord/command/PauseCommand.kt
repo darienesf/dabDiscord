@@ -1,8 +1,11 @@
 package org.dabbot.discord.command
 
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.launch
 import org.dabbot.discord.Command
 import org.dabbot.discord.Permission
 
+@Suppress("EXPERIMENTAL_FEATURE_WARNING")
 class PauseCommand: Command(Permission.PAUSE, "pause", "halt", "break") {
     override fun on(ctx: Context) {
         if (!ctx.isUserInVoiceChannel()) {
@@ -18,7 +21,9 @@ class PauseCommand: Command(Permission.PAUSE, "pause", "halt", "break") {
             return
         }
         if (!ctx.server.connected) {
-            ctx.server.open(ctx.getUserVoiceChannel()!!)
+            launch(CommonPool) {
+                ctx.server.open(ctx.getUserVoiceChannel()!!)
+            }
         }
         ctx.server.pause()
         ctx.reply("Music paused!")

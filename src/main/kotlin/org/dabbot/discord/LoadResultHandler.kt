@@ -4,7 +4,10 @@ import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.launch
 
+@Suppress("EXPERIMENTAL_FEATURE_WARNING")
 class LoadResultHandler(val ctx: Command.Context, val query: SongQuery): AudioLoadResultHandler {
     override fun noMatches() {
         if (query.search) {
@@ -22,13 +25,17 @@ class LoadResultHandler(val ctx: Command.Context, val query: SongQuery): AudioLo
 
     private fun loadTrack(t: AudioTrack) {
         val song = QueueSong(t, ctx.event.author.id, ctx.server.playerManager)
-        ctx.server.queue?.add(song)
+        launch(CommonPool) {
+            ctx.server.queue?.add(song)
+        }
     }
 
     override fun trackLoaded(t: AudioTrack) {
         loadTrack(t)
         if (!ctx.server.playing) {
-            ctx.server.play(ctx.server.queue!!.next()!!)
+            launch(CommonPool) {
+                ctx.server.play(ctx.server.queue!!.next()!!)
+            }
         }
     }
 

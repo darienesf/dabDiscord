@@ -2,11 +2,12 @@ package org.dabbot.discord
 
 import org.json.JSONObject
 
+@Suppress("EXPERIMENTAL_FEATURE_WARNING")
 class ServerProperties(val requester: Requester, val server: Server) {
     fun invalidateCache() {
     }
 
-    fun get(property: String): String? {
+    suspend fun get(property: String): String? {
         val r = requester.execute(Method.GET, "/properties/${server.guild.id}/$property")
         if (r.code() != 200) {
             r.close()
@@ -22,7 +23,7 @@ class ServerProperties(val requester: Requester, val server: Server) {
         }
     }
 
-    fun set(property: String, value: String) {
+    suspend fun set(property: String, value: String) {
         val r = requester.executePlainText(Method.PUT, "/properties/${server.guild.id}/$property", value)
         if (r.code() != 200) {
             // o shit dude do something

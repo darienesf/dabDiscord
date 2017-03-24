@@ -1,33 +1,36 @@
 package org.dabbot.discord.command
 
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.launch
 import org.dabbot.discord.Command
 import org.dabbot.discord.Permission
 
+@Suppress("EXPERIMENTAL_FEATURE_WARNING")
 class DebugCommand: Command(Permission.DEBUG, "debug") {
     override fun on(ctx: Context) {
-        var r = String()
-        r += "```"
-        r += "\nctx.server.guild.id: ${ctx.server.guild.id}"
-        r += "\nctx.shard.id: ${ctx.shard.id}"
-        r += "\nctx.server.jda!!.ping: ${ctx.shard.jda!!.ping}"
-        r += "\nctx.server.connected: ${ctx.server.connected}"
-        r += "\nctx.server.audioPlayer.isPaused: ${ctx.server.audioPlayer.isPaused}"
-        r += "\nctx.server.audioPlayer.playingTrack: ${ctx.server.audioPlayer.playingTrack}"
-        if (ctx.server.audioPlayer.playingTrack != null) {
-            r += "\nctx.server.audioPlayer.playingTrack.sourceManager.sourceName: ${ctx.server.audioPlayer.playingTrack.sourceManager.sourceName}"
-            r += "\nctx.server.audioPlayer.playingTrack.identifier: ${ctx.server.audioPlayer.playingTrack.identifier}"
-            r += "\nctx.server.audioPlayer.playingTrack.info.title: ${ctx.server.audioPlayer.playingTrack.info.title}"
-            r += "\nctx.server.audioPlayer.playingTrack.info.author: ${ctx.server.audioPlayer.playingTrack.info.author}"
-            r += "\nctx.server.audioPlayer.playingTrack.info.length: ${ctx.server.audioPlayer.playingTrack.info.length}"
-            val current = ctx.server.queue!!.current()
-            r += "\nctx.server.queue!!.current { current ->"
-            r += "\n  current?.id: ${current?.id}"
-            r += "\n  current?.addedBy: ${current?.addedBy}"
-            r += "\n  current?.dateAdded: ${current?.dateAdded.toString()}"
-            r += "\n}"
-            ctx.reply("$r```")
-        } else {
-            ctx.reply("$r```")
+        launch(CommonPool) {
+            var r = String()
+            r += "```"
+            r += "\nguild.id: ${ctx.server.guild.id}"
+            r += "\nshard.id: ${ctx.shard.id}"
+            r += "\nping: ${ctx.shard.jda!!.ping}"
+            r += "\nconnected: ${ctx.server.connected}"
+            r += "\nisPaused: ${ctx.server.audioPlayer.isPaused}"
+            r += "\nplayingTrack: ${ctx.server.audioPlayer.playingTrack}"
+            if (ctx.server.audioPlayer.playingTrack != null) {
+                r += "\nsourceName: ${ctx.server.audioPlayer.playingTrack.sourceManager.sourceName}"
+                r += "\nidentifier: ${ctx.server.audioPlayer.playingTrack.identifier}"
+                r += "\ntitle: ${ctx.server.audioPlayer.playingTrack.info.title}"
+                r += "\nauthor: ${ctx.server.audioPlayer.playingTrack.info.author}"
+                r += "\nlength: ${ctx.server.audioPlayer.playingTrack.info.length}"
+                val current = ctx.server.queue!!.current()
+                r += "\ncurrent id: ${current?.id}"
+                r += "\ncurrent addedBy: ${current?.addedBy}"
+                r += "\ncurrent dateAdded: ${current?.dateAdded.toString()}"
+                ctx.reply("$r```")
+            } else {
+                ctx.reply("$r```")
+            }
         }
     }
 }

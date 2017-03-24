@@ -1,10 +1,13 @@
 package org.dabbot.discord.command
 
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.launch
 import net.dv8tion.jda.core.exceptions.PermissionException
-import org.json.JSONObject
 import org.dabbot.discord.Command
 import org.dabbot.discord.Permission
+import org.json.JSONObject
 
+@Suppress("EXPERIMENTAL_FEATURE_WARNING")
 class AnnouncementsCommand: Command(Permission.ANNOUNCEMENTS, "announcements", "anouncements", "announcement", "setmusic", "setchannel", "musicchannel", "musicchanel", "annoncements") {
     override fun on(ctx: Context) {
         if (!ctx.event.member.hasPermission(net.dv8tion.jda.core.Permission.ADMINISTRATOR)) {
@@ -56,7 +59,9 @@ class AnnouncementsCommand: Command(Permission.ANNOUNCEMENTS, "announcements", "
             }
         }
         json.put("type", ctx.args[0].toLowerCase())
-        ctx.server.properties.set("announcements", json.toString())
-        ctx.reply("Setup announcements!")
+        launch(CommonPool) {
+            ctx.server.properties.set("announcements", json.toString())
+            ctx.reply("Setup announcements!")
+        }
     }
 }

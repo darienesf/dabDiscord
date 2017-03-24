@@ -2,6 +2,7 @@ package org.dabbot.discord
 
 import org.json.JSONObject
 
+@Suppress("EXPERIMENTAL_FEATURE_WARNING")
 class Queue(val requester: Requester, val server: Server) {
     val serverId: String = server.guild.id
     // todo get next song ready
@@ -12,7 +13,7 @@ class Queue(val requester: Requester, val server: Server) {
         return song
     }
 
-    fun list(): List<QueueSong>? {
+    suspend fun list(): List<QueueSong>? {
         val r = requester.execute(Method.GET, "/queues/$serverId")
         if (r.code() == 400) {
             r.close()
@@ -33,7 +34,7 @@ class Queue(val requester: Requester, val server: Server) {
         return songs
     }
 
-    fun next(): QueueSong? {
+    suspend fun next(): QueueSong? {
         val r = requester.execute(Method.GET, "/queues/$serverId/next")
         if (r.code() == 400) {
             // no songs left in queue
@@ -48,7 +49,7 @@ class Queue(val requester: Requester, val server: Server) {
         return song
     }
 
-    fun current(): QueueSong? {
+    suspend fun current(): QueueSong? {
         val r = requester.execute(Method.GET, "/queues/$serverId/current")
         if (r.code() == 400) {
             r.close()
@@ -59,7 +60,7 @@ class Queue(val requester: Requester, val server: Server) {
         return song
     }
 
-    fun add(song: QueueSong) {
+    suspend fun add(song: QueueSong) {
         val r = requester.executeJSON(Method.POST, "/queues/$serverId/add", song.toJson())
         if (r.code() != 200) {
             // todo
@@ -72,7 +73,7 @@ class Queue(val requester: Requester, val server: Server) {
         song.id = queueSongId
     }
 
-    fun move(song: QueueSong, position: Int) {
+    suspend fun move(song: QueueSong, position: Int) {
         val body = JSONObject()
                 .put("song_id", song.id)
                 .put("position", position)
@@ -83,7 +84,7 @@ class Queue(val requester: Requester, val server: Server) {
         r.close()
     }
 
-    fun clear() {
+    suspend fun clear() {
         val r = requester.execute(Method.DELETE, "/queues/$serverId/clear")
         if (r.code() != 200) {
             // todo
@@ -91,7 +92,7 @@ class Queue(val requester: Requester, val server: Server) {
         r.close()
     }
 
-    fun shuffle() {
+    suspend fun shuffle() {
         val r = requester.execute(Method.GET, "/queues/$serverId/shuffle")
         if (r.code() != 200) {
             // todo

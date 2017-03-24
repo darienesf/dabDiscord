@@ -5,6 +5,8 @@ import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.launch
 
 class TrackScheduler(val server: Server): AudioEventAdapter() {
     override fun onTrackStart(player: AudioPlayer?, track: AudioTrack?) {
@@ -14,12 +16,14 @@ class TrackScheduler(val server: Server): AudioEventAdapter() {
         if (!endReason!!.mayStartNext) {
             return
         }
-        val repeat = server.properties.get("repeat")
-        if (repeat != null && repeat == "true" && track != null) {
-            val newTrack = track.makeClone()
-            player!!.playTrack(newTrack)
-        } else {
-            server.play(server.queue!!.next()!!)
+        launch(CommonPool) {
+            val repeat = server.properties.get("repeat")
+            if (repeat != null && repeat == "true" && track != null) {
+                val newTrack = track.makeClone()
+                player!!.playTrack(newTrack)
+            } else {
+                server.play(server.queue!!.next()!!)
+            }
         }
     }
 

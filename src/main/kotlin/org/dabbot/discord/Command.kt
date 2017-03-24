@@ -1,6 +1,6 @@
 package org.dabbot.discord
 
-import club.minnced.kjda.sendTextAsync
+import club.minnced.kjda.entities.sendTextAsync
 import net.dv8tion.jda.core.entities.Message
 import net.dv8tion.jda.core.entities.VoiceChannel
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent
@@ -25,7 +25,7 @@ abstract class Command(val permission: Permission, name: String, vararg names: S
 
     abstract fun on(ctx: Context)
 
-    class Context(val shard: ShardManager.Shard, val event: MessageReceivedEvent, val args: List<String>) {
+    class Context internal constructor(val shard: ShardManager.Shard, val event: MessageReceivedEvent, val args: List<String>) {
         val server = shard.serverManager?.getOrCreate(event.guild)!!
 
         init {
@@ -33,7 +33,7 @@ abstract class Command(val permission: Permission, name: String, vararg names: S
         }
 
         fun reply(message: String, callback: ((Message?) -> Unit)?) {
-            val action = event.textChannel.sendTextAsync { message } then { m ->
+            event.textChannel.sendTextAsync { message } then { m ->
                 callback?.invoke(m)
             } catch { e ->
                 LOG.warn(ExceptionUtils.getStackTrace(e))

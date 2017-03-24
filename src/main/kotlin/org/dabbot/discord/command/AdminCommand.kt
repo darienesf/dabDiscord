@@ -3,6 +3,8 @@ package org.dabbot.discord.command
 import com.moandjiezana.toml.Toml
 import com.sedmelluq.discord.lavaplayer.tools.io.MessageInput
 import com.sedmelluq.discord.lavaplayer.tools.io.MessageOutput
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.launch
 import net.dv8tion.jda.core.entities.VoiceChannel
 import org.dabbot.discord.Command
 import org.dabbot.discord.Permission
@@ -12,6 +14,7 @@ import java.util.*
 import javax.script.ScriptEngineManager
 import javax.script.ScriptException
 
+@Suppress("EXPERIMENTAL_FEATURE_WARNING")
 class AdminCommand(private val config: Toml) : Command(Permission.ADMIN, "admin", "a") {
     val engineManager = ScriptEngineManager()
 
@@ -28,12 +31,16 @@ class AdminCommand(private val config: Toml) : Command(Permission.ADMIN, "admin"
                 }
             }
             "open" -> {
-                ctx.server.open(ctx.getUserVoiceChannel() as VoiceChannel)
-                ctx.reply("Connection opened!")
+                launch(CommonPool) {
+                    ctx.server.open(ctx.getUserVoiceChannel() as VoiceChannel)
+                    ctx.reply("Connection opened!")
+                }
             }
             "close" -> {
-                ctx.server.close()
-                ctx.reply("Connection closed!")
+                launch(CommonPool) {
+                    ctx.server.close()
+                    ctx.reply("Connection closed!")
+                }
             }
             "js" -> {
                 val engine = engineManager.getEngineByName("nashorn")
@@ -66,7 +73,9 @@ class AdminCommand(private val config: Toml) : Command(Permission.ADMIN, "admin"
                 }
                 val bytes = Base64.getDecoder().decode(ctx.args[1].toByteArray())
                 val holder = ctx.server.playerManager.decodeTrack(MessageInput(bytes.inputStream()))
-                ctx.server.queue!!.add(QueueSong(holder.decodedTrack, ctx.event.author.id, ctx.server.playerManager))
+                launch(CommonPool) {
+                    ctx.server.queue!!.add(QueueSong(holder.decodedTrack, ctx.event.author.id, ctx.server.playerManager))
+                }
             }
         }
     }

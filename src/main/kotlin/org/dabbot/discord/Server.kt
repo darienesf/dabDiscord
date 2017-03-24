@@ -8,6 +8,7 @@ import net.dv8tion.jda.core.entities.User
 import net.dv8tion.jda.core.entities.VoiceChannel
 import org.json.JSONObject
 
+@Suppress("EXPERIMENTAL_FEATURE_WARNING")
 class Server(val manager: ServerManager, val requester: Requester, val guild: Guild, val playerManager: AudioPlayerManager) {
     val audioPlayer: AudioPlayer = playerManager.createPlayer()
     var queue: Queue? = Queue(requester, this)
@@ -33,7 +34,7 @@ class Server(val manager: ServerManager, val requester: Requester, val guild: Gu
         r.close()
     }
 
-    fun open(voiceChannel: VoiceChannel) {
+    suspend fun open(voiceChannel: VoiceChannel) {
         val audioManager = guild.audioManager
         if (audioManager.isConnected) {
             return
@@ -45,7 +46,7 @@ class Server(val manager: ServerManager, val requester: Requester, val guild: Gu
         updateVoiceChannel()
     }
 
-    fun close() {
+    suspend fun close() {
         guild.audioManager.closeAudioConnection()
         voiceChannel = null
         playing = false
@@ -53,7 +54,7 @@ class Server(val manager: ServerManager, val requester: Requester, val guild: Gu
         updateVoiceChannel()
     }
 
-    private fun updateVoiceChannel() {
+    suspend private fun updateVoiceChannel() {
         val body = JSONObject().put("voice_channel", voiceChannel?.id)
         val r = requester.executeJSON(Method.PUT, "/servers/" + guild.id, body)
         if (r.code() != 200) {
@@ -62,7 +63,7 @@ class Server(val manager: ServerManager, val requester: Requester, val guild: Gu
         r.close()
     }
 
-    fun delete() {
+    suspend fun delete() {
         queue?.clear()
         val r = requester.execute(Method.DELETE, "/servers/" + guild.id)
         if (r.code() == 200) {
@@ -74,7 +75,7 @@ class Server(val manager: ServerManager, val requester: Requester, val guild: Gu
         r.close()
     }
 
-    fun play(song: QueueSong) {
+    suspend fun play(song: QueueSong) {
         if (!connected) {
             return
         }

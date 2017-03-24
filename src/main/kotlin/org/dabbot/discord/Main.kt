@@ -6,7 +6,7 @@ import java.io.File
 import java.util.logging.Level
 import java.util.logging.Logger
 
-val configFileName = "config.toml"
+private val configFileName = "config.toml"
 
 fun main(args: Array<String>) {
     Logger.getLogger(OkHttpClient::class.java.name).level = Level.FINE
