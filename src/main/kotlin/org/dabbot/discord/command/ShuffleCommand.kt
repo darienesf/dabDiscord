@@ -1,3 +1,5 @@
+@file:Suppress("EXPERIMENTAL_FEATURE_WARNING")
+
 package org.dabbot.discord.command
 
 import kotlinx.coroutines.experimental.CommonPool

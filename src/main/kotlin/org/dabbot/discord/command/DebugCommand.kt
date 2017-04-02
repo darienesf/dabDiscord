@@ -12,7 +12,7 @@ class DebugCommand: Command(Permission.DEBUG, "debug") {
             var r = String()
             r += "```"
             r += "\nguild.id: ${ctx.server.guild.id}"
-            r += "\nshard.id: ${ctx.shard.id}"
+            r += "\nshard.id: ${ctx.shard.shard}"
             r += "\nping: ${ctx.shard.jda!!.ping}"
             r += "\nconnected: ${ctx.server.connected}"
             r += "\nisPaused: ${ctx.server.audioPlayer.isPaused}"
@@ -27,10 +27,8 @@ class DebugCommand: Command(Permission.DEBUG, "debug") {
                 r += "\ncurrent id: ${current?.id}"
                 r += "\ncurrent addedBy: ${current?.addedBy}"
                 r += "\ncurrent dateAdded: ${current?.dateAdded.toString()}"
-                ctx.reply("$r```")
-            } else {
-                ctx.reply("$r```")
             }
+            ctx.reply("$r```")
         }
     }
 }

@@ -25,7 +25,7 @@ abstract class Command(val permission: Permission, name: String, vararg names: S
 
     abstract fun on(ctx: Context)
 
-    class Context internal constructor(val shard: ShardManager.Shard, val event: MessageReceivedEvent, val args: List<String>) {
+    class Context internal constructor(val shard: Shard, val event: MessageReceivedEvent, val args: List<String>) {
         val server = shard.serverManager?.getOrCreate(event.guild)!!
 
         init {

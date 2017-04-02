@@ -48,7 +48,7 @@
         <dependency>
             <groupId>com.github.DV8FromTheWorld</groupId>
             <artifactId>JDA</artifactId>
-            <version>dabe092</version>
+            <version>c46fcb4</version>
         </dependency>
         <dependency>
             <groupId>com.sedmelluq</groupId>
@@ -94,6 +94,11 @@
             <groupId>com.github.JDA-Applications</groupId>
             <artifactId>Kotlin-JDA</artifactId>
             <version>ed67c60</version>
+        </dependency>
+        <dependency>
+            <groupId>com.neovisionaries</groupId>
+            <artifactId>nv-websocket-client</artifactId>
+            <version>1.30</version>
         </dependency>
     </dependencies>
     <build>

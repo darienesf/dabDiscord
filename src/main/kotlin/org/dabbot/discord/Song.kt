@@ -4,6 +4,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack
 import org.apache.commons.lang3.time.DurationFormatUtils
 
 interface Song: SelectorItem {
+    var songId: Long?
     val source: String?
     val identifier: String?
     val encoded: String?

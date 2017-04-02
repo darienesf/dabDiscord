@@ -11,12 +11,12 @@ private val configFileName = "config.toml"
 fun main(args: Array<String>) {
     Logger.getLogger(OkHttpClient::class.java.name).level = Level.FINE
     val config = Toml().read(File(configFileName))
+    val shard: Shard
     if (args.isEmpty()) {
-        ShardManager(config)
+        shard = Shard(config)
     } else {
         val shardCount = Integer.parseInt(args[0])
-        val minShard = Integer.parseInt(args[1])
-        val maxShard = Integer.parseInt(args[2])
-        ShardManager(config, shardCount, minShard, maxShard)
+        val shardId = Integer.parseInt(args[1])
+        shard = Shard(config, shardCount, shardId)
     }
 }

@@ -1,11 +1,12 @@
 package org.dabbot.discord
 
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.channels.produce
 import org.json.JSONObject
 
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
 class Queue(val requester: Requester, val server: Server) {
     val serverId: String = server.guild.id
-    // todo get next song ready
 
     private fun loadSong(o: JSONObject): QueueSong {
         val song = QueueSong(o)
@@ -13,26 +14,35 @@ class Queue(val requester: Requester, val server: Server) {
         return song
     }
 
-    suspend fun list(): List<QueueSong>? {
-        val r = requester.execute(Method.GET, "/queues/$serverId")
+    suspend fun size(): Int {
+        val r = requester.execute(Method.GET, "/queues/$serverId/size")
         if (r.code() == 400) {
+            // todo handle
             r.close()
-            return null
+            return 0
         }
-        val array = JSONObject(r.body().string()).getJSONArray("songs")
+        val size = JSONObject(r.body().string()).getInt("size")
         r.close()
-        if (array.length() == 0) {
-            return null
-        }
-        val songs = ArrayList<QueueSong>(array.length())
-        var i = 0
-        while (i < array.length()) {
-            val song = QueueSong(array.getJSONObject(i))
-            songs.add(song)
-            i++
-        }
-        return songs
+        return size
     }
+
+    suspend fun list(limit: Int, offset: Int) = produce(CommonPool) {
+        val r = requester.execute(Method.GET, "/queues/$serverId?limit=$limit&offset=$offset")
+        if (r.code() == 400) {
+            // todo handle
+            r.close()
+            close()
+            return@produce
+        }
+        val array = JSONObject(r.body().string()).getJSONArray("queue")
+        r.close()
+        repeat(array.length()) { i ->
+            send(QueueSong(array[i] as JSONObject))
+        }
+        close()
+    }
+
+    suspend fun list() = list(0, 0)
 
     suspend fun next(): QueueSong? {
         val r = requester.execute(Method.GET, "/queues/$serverId/next")
@@ -44,7 +54,20 @@ class Queue(val requester: Requester, val server: Server) {
             server.close()
             return null
         }
-        val song = loadSong(JSONObject(r.body().string()).getJSONObject("song"))
+        val song = loadSong(JSONObject(r.body().string()))
+        r.close()
+        return song
+    }
+
+    suspend fun peek(): QueueSong? {
+        val r = requester.execute(Method.GET, "/queues/$serverId/peek")
+        if (r.code() == 400) {
+            // no songs left in queue
+            // TODO fire event
+            r.close()
+            return null
+        }
+        val song = loadSong(JSONObject(r.body().string()))
         r.close()
         return song
     }
@@ -55,7 +78,7 @@ class Queue(val requester: Requester, val server: Server) {
             r.close()
             return null
         }
-        val song = loadSong(JSONObject(r.body().string()).getJSONObject("song"))
+        val song = loadSong(JSONObject(r.body().string()))
         r.close()
         return song
     }
@@ -67,10 +90,8 @@ class Queue(val requester: Requester, val server: Server) {
         }
         val o = JSONObject(r.body().string())
         r.close()
-        val songId = o.getLong("song_id")
-        val queueSongId = o.getLong("queue_song_id")
-        val position = o.getInt("position")
-        song.id = queueSongId
+        val id = o.getLong("id")
+        song.id = id
     }
 
     suspend fun move(song: QueueSong, position: Int) {

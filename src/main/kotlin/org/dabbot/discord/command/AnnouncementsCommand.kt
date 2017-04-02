@@ -2,66 +2,60 @@ package org.dabbot.discord.command
 
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.launch
-import net.dv8tion.jda.core.exceptions.PermissionException
+import net.dv8tion.jda.core.entities.TextChannel
 import org.dabbot.discord.Command
 import org.dabbot.discord.Permission
-import org.json.JSONObject
+import org.dabbot.discord.properties.Announcements
 
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
 class AnnouncementsCommand: Command(Permission.ANNOUNCEMENTS, "announcements", "anouncements", "announcement", "setmusic", "setchannel", "musicchannel", "musicchanel", "annoncements") {
     override fun on(ctx: Context) {
-        if (!ctx.event.member.hasPermission(net.dv8tion.jda.core.Permission.ADMINISTRATOR)) {
-            ctx.reply("Only the server owner or users with the `Administrator` permission can use this command.")
-            return
-        }
-        if (ctx.args.isEmpty()) {
-            ctx.reply("This command is for setting up dabBot's announcement messages!" +
-                    "\nUsage: `!!!announcements <normal/channel/none>`" +
-                    "\n**normal**: announce songs in the channel the last command was ran in" +
-                    "\n**channel**: announce in a specific channel" +
-                    "\n**none**: no announcements")
-            return
-        }
-        val json = JSONObject()
-        when (ctx.args[0].toLowerCase()) {
-            "normal" -> {}
-            "channel" -> {
-                if (ctx.args.size != 2) {
-                    ctx.reply("Usage: `!!!announcements channel <channel name>`\nExample: `!!!announcements channel #music-log`")
-                    return
-                }
-                var name = ctx.args[1]
-                if (name[0] == '#') {
-                    name = name.substring(1)
-                }
-                val channels = ctx.event.guild.getTextChannelsByName(name, true)
-                if (channels.isEmpty()) {
-                    ctx.reply("No text channels found by that name!")
-                    return
-                }
-                val channel = channels[0]
-                try {
-                    channel.sendMessage("Setup <#${channel.id}> as the dabBot music announcements channel!").complete()
-                } catch (e: PermissionException) {
-                    ctx.reply("dabBot does not have permission to send messages in that channel!")
-                    return
-                }
-                json.put("channel", channel.id)
-            }
-            "none" -> {}
-            else -> {
-                ctx.reply("This command is for setting up dabBot's announcement messages!" +
-                        "\nUsage: `!!!announcements <normal/channel/none>`" +
-                        "\n`normal`: announce songs in the current channel" +
-                        "\n`channel`: announce songs in the specified channel" +
-                        "\n`none`: no announcements")
-                return
-            }
-        }
-        json.put("type", ctx.args[0].toLowerCase())
+        val property = ctx.server.properties["announcements"] as Announcements
         launch(CommonPool) {
-            ctx.server.properties.set("announcements", json.toString())
-            ctx.reply("Setup announcements!")
+            if (ctx.args.isEmpty()) {
+                val config = property.get()
+                val builder = StringBuilder("Announcements:")
+                builder.append("\nCurrent setting: `${config.type.name.toLowerCase()}`")
+                ctx.reply(builder.toString())
+                return@launch
+            }
+            val type: Announcements.Type
+            try {
+                type = Announcements.Type.valueOf(ctx.args[0].toUpperCase())
+            } catch (e: IllegalArgumentException) {
+                ctx.reply("usage lol") // todo usage
+                return@launch
+            }
+            val channel: TextChannel?
+            if (type == Announcements.Type.CHANNEL) {
+                if (ctx.args.size == 2) {
+                    var name = ctx.args[1]
+                    if (name[0] == '#') {
+                        name = name.substring(1)
+                    }
+                    val channels = ctx.server.guild.getTextChannelsByName(name, true)
+                    if (channels == null || channels.size == 0) {
+                        ctx.reply("Could not find the channel #$name!")
+                        return@launch
+                    }
+                    channel = channels[0]
+                    if (!ctx.event.guild.selfMember.hasPermission(channel, net.dv8tion.jda.core.Permission.MESSAGE_WRITE)) {
+                        ctx.reply("dabBot cannot send messages in <#${channel.id}> so announcements cannot be setup!")
+                        return@launch
+                    }
+                } else {
+                    channel = ctx.event.textChannel
+                }
+            } else {
+                channel = null
+            }
+            val config = Announcements.Config(type, channel)
+            property.set(config)
+            if (channel == null) {
+                ctx.reply("Setup announcements!")
+            } else {
+                ctx.reply("Setup announcements in <#${channel.id}>!")
+            }
         }
     }
 }

@@ -3,24 +3,24 @@ package org.dabbot.discord
 import com.moandjiezana.toml.Toml
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.launch
-import net.dv8tion.jda.core.events.guild.GuildJoinEvent
-import net.dv8tion.jda.core.events.guild.GuildLeaveEvent
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent
 import net.dv8tion.jda.core.hooks.ListenerAdapter
-import org.json.JSONArray
+import org.dabbot.discord.properties.ChannelIgnores
 import java.net.ConnectException
 import java.util.regex.Pattern
 
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
-class Listener(val shard: ShardManager.Shard, val commandManager: CommandManager, config: Toml): ListenerAdapter() {
+class Listener(val shard: Shard, val commandManager: CommandManager, config: Toml): ListenerAdapter() {
     val commandPattern: Pattern
     val developerMode: Boolean
     val splittingRegex = Regex("\\s+")
+    val admins: List<String>
 
     init {
-        val propertiesConfig = config.getTable("properties")
+        val propertiesConfig = config.getTable("propertyManager")
         commandPattern = Pattern.compile(propertiesConfig.getString("regex"))
         developerMode = propertiesConfig.getBoolean("developerMode")
+        admins = config.getTable("discord").getList<String>("admins")
     }
 
     override fun onMessageReceived(event: MessageReceivedEvent) {
@@ -42,12 +42,10 @@ class Listener(val shard: ShardManager.Shard, val commandManager: CommandManager
         launch(CommonPool) {
             try {
                 val ctx = Command.Context(shard, event, matches)
-                val channelIgnore = ctx.server.properties.get("channelignore")
-                if (channelIgnore != null) {
-                    val json = JSONArray(channelIgnore)
-                    json.filter { it == event.textChannel.id }.first { return@launch }
+                if ((ctx.server.properties["channelignore"] as ChannelIgnores).isIgnoring(event.textChannel)) {
+                    return@launch
                 }
-                if (!hasPermission(event.member, cmd.permission)) {
+                if (!hasPermission(event.member, cmd.permission) && !admins.contains(event.member.user.id)) {
                     ctx.reply("You do not have permission to do that! Use `!!!permissions` to learn about dabBot's permission system.")
                 } else {
                     cmd.on(ctx)
@@ -57,16 +55,5 @@ class Listener(val shard: ShardManager.Shard, val commandManager: CommandManager
                 e.printStackTrace()
             }
         }
-
-    }
-
-    override fun onGuildJoin(event: GuildJoinEvent?) {
-        if (developerMode) return
-        shard.updateStatistics()
-    }
-
-    override fun onGuildLeave(event: GuildLeaveEvent?) {
-        if (developerMode) return
-        shard.updateStatistics()
     }
 }

@@ -4,6 +4,8 @@ import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.launch
 import org.dabbot.discord.Command
 import org.dabbot.discord.Permission
+import org.dabbot.discord.properties.Loops
+import org.dabbot.discord.properties.Repeats
 
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
 class RepeatCommand: Command(Permission.REPEAT, "repeat", "repeatsong", "rs", "loop", "cycle") {
@@ -16,25 +18,23 @@ class RepeatCommand: Command(Permission.REPEAT, "repeat", "repeatsong", "rs", "l
         val subCommand = ctx.args[0].toLowerCase()
         launch(CommonPool) {
             if (subCommand == "song" || subCommand == "s") {
-                val property = ctx.server.properties.get("repeat")
-                val newVal: String
-                if (property == null || property == "false") {
-                    newVal = "true"
+                val property = ctx.server.properties["repeat"] as Repeats
+                val repeating = !property.isRepeating()
+                property.setRepeating(repeating)
+                if (repeating) {
+                    ctx.reply("Enabled song repeating!")
                 } else {
-                    newVal = "false"
+                    ctx.reply("Disabled song repeating!")
                 }
-                ctx.server.properties.set("repeat", newVal)
-                ctx.reply("Set song looping to `$newVal`!")
             } else if (subCommand == "queue" || subCommand == "q") {
-                val property = ctx.server.properties.get("loop")
-                val newVal: String
-                if (property == null || property == "false") {
-                    newVal = "true"
+                val property = ctx.server.properties["loop"] as Loops
+                val looping = !property.isLooping()
+                property.setLooping(looping)
+                if (looping) {
+                    ctx.reply("Enabled queue repeating!")
                 } else {
-                    newVal = "false"
+                    ctx.reply("Disabled queue repeating!")
                 }
-                ctx.server.properties.set("loop", newVal)
-                ctx.reply("Set queue looping to `$newVal`!")
             } else {
                 ctx.reply("Usage: `!!!repeat <song/queue>`\n`song` = repeat just this song." +
                         "\n`queue` = repeat the whole song queue.")

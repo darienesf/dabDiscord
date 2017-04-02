@@ -12,6 +12,8 @@ class QueueSong: Song {
     var id: Long?
     var addedBy: String?
     var dateAdded: Date?
+    var position: Int? = -1
+    override var songId: Long? = null
     override val source: String?
     override val identifier: String?
     override val encoded: String?
@@ -24,12 +26,16 @@ class QueueSong: Song {
         this.id = o.getLong("id")
         this.addedBy = o.getString("added_by")
         this.dateAdded = null // todo parse date string
-        this.source = o.getString("source")
-        this.identifier = o.getString("identifier")
-        this.encoded = o.getString("encoded")
-        this.title = o.getString("title")
-        this.author = o.getString("author")
-        this.duration = o.getLong("duration")
+        this.position = o.getInt("position")
+        val song = o.getJSONObject("song")
+        this.songId = song.getLong("id")
+        this.source = song.getString("source")
+        this.identifier = song.getString("identifier")
+        this.encoded = song.getString("encoded")
+        val meta = song.getJSONObject("meta")
+        this.title = meta.getString("title")
+        this.author = meta.getString("author")
+        this.duration = meta.getLong("duration")
     }
 
     constructor(title: String, author: String, duration: Long, track: AudioTrack) {
@@ -43,19 +49,6 @@ class QueueSong: Song {
         this.author = author
         this.duration = duration
         this.track = track
-    }
-
-    constructor(requester: Requester, id: Long) {
-        this.id = id
-        this.addedBy = null
-        this.dateAdded = null
-        this.source = null
-        this.identifier = null
-        this.encoded = null
-        this.title = null
-        this.author = null
-        this.duration = null
-        this.track = null // todo
     }
 
     constructor(track: AudioTrack, addedBy: String, playerManager: AudioPlayerManager) {

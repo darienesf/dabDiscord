@@ -6,13 +6,17 @@ import net.dv8tion.jda.core.entities.Guild
 import net.dv8tion.jda.core.entities.TextChannel
 import net.dv8tion.jda.core.entities.User
 import net.dv8tion.jda.core.entities.VoiceChannel
+import org.dabbot.discord.properties.Announcements
+import org.dabbot.discord.properties.Property
+import org.dabbot.discord.properties.ServerProperties
 import org.json.JSONObject
 
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
 class Server(val manager: ServerManager, val requester: Requester, val guild: Guild, val playerManager: AudioPlayerManager) {
     val audioPlayer: AudioPlayer = playerManager.createPlayer()
     var queue: Queue? = Queue(requester, this)
-    val properties: ServerProperties = ServerProperties(requester, this)
+    val properties = HashMap<String, Property>()
+    internal val propertyManager: ServerProperties = ServerProperties(requester, this).registerProperties(properties)
     var voiceChannel: VoiceChannel? = null
     val selectors: MutableMap<User, Selector> = HashMap()
     var playing = false
@@ -81,11 +85,10 @@ class Server(val manager: ServerManager, val requester: Requester, val guild: Gu
         }
         if (audioPlayer.startTrack(song.track, false)) {
             playing = true
-            val result = properties.get("announcements")
-            val json = JSONObject(result)
             val msg = "Now playing **${song.title}** by **${song.author}** `[${song.getFormattedDuration()}]`"
-            when (json.getString("type")) {
-                "normal" -> {
+            val config = (properties["announcements"] as Announcements).get()
+            when (config.type) {
+                Announcements.Type.NORMAL -> {
                     val channel: TextChannel
                     if (lastTextChannel == null) {
                         channel = guild.publicChannel
@@ -94,12 +97,10 @@ class Server(val manager: ServerManager, val requester: Requester, val guild: Gu
                     }
                     channel.sendMessage(msg).queue()
                 }
-                "channel" -> {
-                    val channelId = json.getString("channel")
-                    val channel = guild.getTextChannelById(channelId)
-                    channel.sendMessage(msg).queue()
+                Announcements.Type.CHANNEL -> {
+                    config.channel!!.sendMessage(msg).queue()
                 }
-                "none" -> {}
+                Announcements.Type.DEFAULT -> {}
             }
         } else {
             playing = false

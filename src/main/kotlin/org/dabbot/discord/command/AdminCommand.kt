@@ -26,9 +26,8 @@ class AdminCommand(private val config: Toml) : Command(Permission.ADMIN, "admin"
         }
         when (ctx.args[0].toLowerCase()) {
             "stop" -> {
-                ctx.shard.manager.shards.forEach { shard ->
-                    shard?.jda?.shutdown(false)
-                }
+                ctx.shard.client.disconnect()
+                ctx.shard.jda?.shutdown(false)
             }
             "open" -> {
                 launch(CommonPool) {
