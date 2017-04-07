@@ -1,4 +1,4 @@
-package org.dabbot.discord.properties
+package org.dabbot.discord.property
 
 import org.dabbot.discord.Method
 import org.dabbot.discord.Requester
@@ -6,7 +6,7 @@ import org.dabbot.discord.Server
 import org.json.JSONObject
 
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
-class ServerProperties(val requester: Requester, val server: Server) {
+internal class ServerProperties(private val requester: Requester, private val server: Server) {
     internal fun registerProperties(map: MutableMap<String, Property>): ServerProperties {
         fun add(vararg properties: Property) {
             for (property in properties) {

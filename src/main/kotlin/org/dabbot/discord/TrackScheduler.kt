@@ -1,3 +1,5 @@
+@file:Suppress("EXPERIMENTAL_FEATURE_WARNING")
+
 package org.dabbot.discord
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer
@@ -5,6 +7,9 @@ import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.launch
+import org.dabbot.discord.property.Repeats
 
 class TrackScheduler(val server: Server): AudioEventAdapter() {
     override fun onTrackStart(player: AudioPlayer?, track: AudioTrack?) {
@@ -14,15 +19,16 @@ class TrackScheduler(val server: Server): AudioEventAdapter() {
         if (!endReason!!.mayStartNext) {
             return
         }
-        /*launch(CommonPool) {
-            val repeat = server.properties.get("repeat")
-            if (repeat != null && repeat == "true" && track != null) {
-                val newTrack = track.makeClone()
-                player!!.playTrack(newTrack)
+        launch(CommonPool) {
+            val property = server.properties["repeat"] as Repeats
+            if (track != null && property.isRepeating()) {
+                player!!.playTrack(track.makeClone())
             } else {
-                server.play(server.queue!!.next()!!)
+                val next = server.queue!!.next()
+                if (next != null)
+                    server.play(next)
             }
-        }*/
+        }
     }
 
     override fun onPlayerPause(player: AudioPlayer?) {

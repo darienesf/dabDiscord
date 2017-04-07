@@ -1,10 +1,10 @@
 @file:Suppress("EXPERIMENTAL_FEATURE_WARNING")
 
-package org.dabbot.discord.properties
+package org.dabbot.discord.property
 
 import org.dabbot.discord.Server
 
-abstract class Property(protected val server: Server, internal val key: String) {
+abstract class Property internal constructor(protected val server: Server, internal val key: String) {
     internal abstract fun invalidateCache()
 
     protected suspend fun getProperty(): String? {

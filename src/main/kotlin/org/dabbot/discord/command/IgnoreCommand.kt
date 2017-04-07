@@ -4,7 +4,7 @@ import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.launch
 import org.dabbot.discord.Command
 import org.dabbot.discord.Permission
-import org.dabbot.discord.properties.ChannelIgnores
+import org.dabbot.discord.property.ChannelIgnores
 
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
 class IgnoreCommand: Command(Permission.IGNORE, "ignore", "ignor", "blacklist", "channelignore", "igore") {

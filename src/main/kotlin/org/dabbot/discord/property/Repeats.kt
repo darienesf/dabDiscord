@@ -1,10 +1,10 @@
 @file:Suppress("EXPERIMENTAL_FEATURE_WARNING")
 
-package org.dabbot.discord.properties
+package org.dabbot.discord.property
 
 import org.dabbot.discord.Server
 
-class Repeats(server: Server): Property(server, "repeat") {
+class Repeats internal constructor(server: Server): Property(server, "repeat") {
     private var cache: Boolean? = null
 
     override fun invalidateCache() {

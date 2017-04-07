@@ -1,12 +1,12 @@
 @file:Suppress("EXPERIMENTAL_FEATURE_WARNING")
 
-package org.dabbot.discord.properties
+package org.dabbot.discord.property
 
 import net.dv8tion.jda.core.entities.TextChannel
 import org.dabbot.discord.Server
 import org.json.JSONObject
 
-class Announcements(server: Server): Property(server, "announcements") {
+class Announcements internal constructor(server: Server): Property(server, "announcements") {
     enum class Type {
         NORMAL, CHANNEL, DEFAULT
     }

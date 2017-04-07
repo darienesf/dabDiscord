@@ -6,9 +6,9 @@ import net.dv8tion.jda.core.entities.Guild
 import net.dv8tion.jda.core.entities.TextChannel
 import net.dv8tion.jda.core.entities.User
 import net.dv8tion.jda.core.entities.VoiceChannel
-import org.dabbot.discord.properties.Announcements
-import org.dabbot.discord.properties.Property
-import org.dabbot.discord.properties.ServerProperties
+import org.dabbot.discord.property.Announcements
+import org.dabbot.discord.property.Property
+import org.dabbot.discord.property.ServerProperties
 import org.json.JSONObject
 
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
@@ -17,6 +17,7 @@ class Server(val manager: ServerManager, val requester: Requester, val guild: Gu
     var queue: Queue? = Queue(requester, this)
     val properties = HashMap<String, Property>()
     internal val propertyManager: ServerProperties = ServerProperties(requester, this).registerProperties(properties)
+    val radioStations = RadioStations(requester)
     var voiceChannel: VoiceChannel? = null
     val selectors: MutableMap<User, Selector> = HashMap()
     var playing = false
@@ -85,7 +86,10 @@ class Server(val manager: ServerManager, val requester: Requester, val guild: Gu
         }
         if (audioPlayer.startTrack(song.track, false)) {
             playing = true
-            val msg = "Now playing **${song.title}** by **${song.author}** `[${song.getFormattedDuration()}]`"
+            var msg = "Now playing **${song.title}** "
+            if (!song.track?.info?.isStream!!) {
+                msg += "by **${song.author}** `[${song.getFormattedDuration()}]`"
+            }
             val config = (properties["announcements"] as Announcements).get()
             when (config.type) {
                 Announcements.Type.NORMAL -> {

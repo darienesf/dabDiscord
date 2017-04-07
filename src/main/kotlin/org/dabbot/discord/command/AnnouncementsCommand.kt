@@ -5,7 +5,7 @@ import kotlinx.coroutines.experimental.launch
 import net.dv8tion.jda.core.entities.TextChannel
 import org.dabbot.discord.Command
 import org.dabbot.discord.Permission
-import org.dabbot.discord.properties.Announcements
+import org.dabbot.discord.property.Announcements
 
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
 class AnnouncementsCommand: Command(Permission.ANNOUNCEMENTS, "announcements", "anouncements", "announcement", "setmusic", "setchannel", "musicchannel", "musicchanel", "annoncements") {

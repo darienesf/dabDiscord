@@ -4,8 +4,8 @@ import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.launch
 import org.dabbot.discord.Command
 import org.dabbot.discord.Permission
-import org.dabbot.discord.properties.Loops
-import org.dabbot.discord.properties.Repeats
+import org.dabbot.discord.property.Loops
+import org.dabbot.discord.property.Repeats
 
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
 class RepeatCommand: Command(Permission.REPEAT, "repeat", "repeatsong", "rs", "loop", "cycle") {

@@ -20,11 +20,12 @@ class LoadResultHandler(val ctx: Command.Context, val query: SongQuery): AudioLo
 
     override fun loadFailed(e: FriendlyException) {
         e.printStackTrace()
-        ctx.reply("An error occurred") // todo case specific messages
+        ctx.reply("An error occurred: ${e.message}") // todo case specific messages
     }
 
     private fun loadTrack(t: AudioTrack) {
-        val song = QueueSong(t, ctx.event.author.id, ctx.server.playerManager)
+        val song = QueueSong(t, ctx.event.author.id)
+        song.encode(ctx.server.playerManager)
         launch(CommonPool) {
             ctx.server.queue?.add(song)
         }
@@ -45,7 +46,7 @@ class LoadResultHandler(val ctx: Command.Context, val query: SongQuery): AudioLo
         } else if (p.isSearchResult) {
             val list = ArrayList<SelectorItem>()
             p.tracks.forEach { t ->
-                val song = QueueSong(t.info.title, t.info.author, t.duration, t)
+                val song = QueueSong(t, null)
                 list.add(song)
             }
             val selector = Selector(list, { found, item ->

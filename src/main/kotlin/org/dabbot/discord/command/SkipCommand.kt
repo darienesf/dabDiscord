@@ -13,18 +13,19 @@ class SkipCommand: Command(Permission.SKIP, "skip", "s", "next", "n", "sk") {
             return
         }
         launch(CommonPool) {
-            if (!ctx.server.connected) {
-                ctx.server.open(ctx.getUserVoiceChannel()!!)
-            }
             val song = ctx.server.queue!!.next()
             if (song == null) {
                 ctx.reply("The song queue is empty!")
             } else {
+                if (!ctx.server.connected) {
+                    ctx.server.open(ctx.getUserVoiceChannel()!!)
+                }
                 if (ctx.server.isPaused()) {
                     ctx.server.resume()
                     ctx.reply("Music was automatically resumed from being paused! To resume it manually, use `!!!resume`.")
                 }
                 ctx.server.play(song)
+
             }
         }
     }

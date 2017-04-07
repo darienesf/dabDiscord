@@ -49,6 +49,7 @@ class Queue(val requester: Requester, val server: Server) {
         if (r.code() == 400) {
             // no songs left in queue
             // TODO fire event
+            println(r.body().string())
             r.close()
             server.stop()
             server.close()
@@ -91,12 +92,12 @@ class Queue(val requester: Requester, val server: Server) {
         val o = JSONObject(r.body().string())
         r.close()
         val id = o.getLong("id")
-        song.id = id
+        song.queueSongId = id
     }
 
     suspend fun move(song: QueueSong, position: Int) {
         val body = JSONObject()
-                .put("song_id", song.id)
+                .put("song_id", song.queueSongId)
                 .put("position", position)
         val r = requester.executeJSON(Method.PUT, "/queues/$serverId/move", body)
         if (r.code() != 200) {

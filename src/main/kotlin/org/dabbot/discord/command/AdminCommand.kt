@@ -73,7 +73,8 @@ class AdminCommand(private val config: Toml) : Command(Permission.ADMIN, "admin"
                 val bytes = Base64.getDecoder().decode(ctx.args[1].toByteArray())
                 val holder = ctx.server.playerManager.decodeTrack(MessageInput(bytes.inputStream()))
                 launch(CommonPool) {
-                    ctx.server.queue!!.add(QueueSong(holder.decodedTrack, ctx.event.author.id, ctx.server.playerManager))
+                    val song = QueueSong(holder.decodedTrack, ctx.event.author.id)
+                    ctx.server.queue!!.add(song)
                 }
             }
         }

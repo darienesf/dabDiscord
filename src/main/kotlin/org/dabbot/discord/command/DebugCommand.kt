@@ -24,7 +24,8 @@ class DebugCommand: Command(Permission.DEBUG, "debug") {
                 r += "\nauthor: ${ctx.server.audioPlayer.playingTrack.info.author}"
                 r += "\nlength: ${ctx.server.audioPlayer.playingTrack.info.length}"
                 val current = ctx.server.queue!!.current()
-                r += "\ncurrent id: ${current?.id}"
+                r += "\ncurrent queueSongId: ${current?.queueSongId}"
+                r += "\ncurrent songId: ${current?.songId}"
                 r += "\ncurrent addedBy: ${current?.addedBy}"
                 r += "\ncurrent dateAdded: ${current?.dateAdded.toString()}"
             }

@@ -8,10 +8,6 @@ import org.dabbot.discord.Permission
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
 class StopCommand: Command(Permission.STOP, "stop", "end", "disconnect", "close", "dc", "leave") {
     override fun on(ctx: Context) {
-        if (!ctx.server.connected || !ctx.server.playing) {
-            ctx.reply("No music is playing in this guild!")
-            return
-        }
         ctx.server.stop()
         launch(CommonPool) {
             ctx.server.close()

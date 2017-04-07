@@ -23,6 +23,7 @@ class CommandManager(config: Toml) {
                 PermissionsCommand(),
                 PlayCommand(),
                 QueueCommand(),
+                RadioCommand(),
                 ReorderCommand(),
                 RepeatCommand(),
                 RestartCommand(),

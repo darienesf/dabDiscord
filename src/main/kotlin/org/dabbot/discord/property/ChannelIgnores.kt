@@ -1,12 +1,12 @@
 @file:Suppress("EXPERIMENTAL_FEATURE_WARNING")
 
-package org.dabbot.discord.properties
+package org.dabbot.discord.property
 
 import net.dv8tion.jda.core.entities.TextChannel
 import org.dabbot.discord.Server
 import org.json.JSONArray
 
-class ChannelIgnores(server: Server): Property(server, "channelignore") {
+class ChannelIgnores internal constructor(server: Server): Property(server, "channelignore") {
     private var cache: JSONArray? = null
 
     override fun invalidateCache() {

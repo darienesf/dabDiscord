@@ -1,10 +1,10 @@
 @file:Suppress("EXPERIMENTAL_FEATURE_WARNING")
 
-package org.dabbot.discord.properties
+package org.dabbot.discord.property
 
 import org.dabbot.discord.Server
 
-class Loops(server: Server): Property(server, "loop") {
+class Loops internal constructor(server: Server): Property(server, "loop") {
     private var cache: Boolean? = null
 
     override fun invalidateCache() {

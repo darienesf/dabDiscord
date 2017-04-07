@@ -5,7 +5,7 @@ import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.launch
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent
 import net.dv8tion.jda.core.hooks.ListenerAdapter
-import org.dabbot.discord.properties.ChannelIgnores
+import org.dabbot.discord.property.ChannelIgnores
 import java.net.ConnectException
 import java.util.regex.Pattern
 
