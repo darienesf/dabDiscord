@@ -121,4 +121,13 @@ class Queue(val requester: Requester, val server: Server) {
         }
         r.close()
     }
+
+    suspend fun delete(position: Int) {
+        val r = requester.executeJSON(Method.DELETE, "/queues/$serverId/position", JSONObject()
+                .put("position", position))
+        if (r.code() != 200) {
+            // todo
+        }
+        r.close()
+    }
 }

@@ -35,7 +35,8 @@ enum class Permission(val bits: Int) {
     ANNOUNCEMENTS   (1 shl 19),
     ADMIN           (1 shl 20),
     IGNORE          (1 shl 21),
-    STOP            (1 shl 22)
+    STOP            (1 shl 22),
+    REMOVE          (1 shl 23),
 }
 
 fun get(vararg permissions: Permission): Int {
