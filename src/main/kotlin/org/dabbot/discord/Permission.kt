@@ -51,22 +51,18 @@ fun hasPermission(member: Member, permission: Permission): Boolean {
     if (member.hasPermission(net.dv8tion.jda.core.Permission.ADMINISTRATOR)) {
         return true
     }
-
     // if everyone has the permission
     if ((everyonePermissions and permission.bits) == permission.bits) {
         return true
     }
-
     val roles = member.guild.getRolesByName("dabbot-dj", true)
     if (roles == null || roles.isEmpty()) {
         // permissions aren't setup, assume everyone is a dj
         return (djPermissions and permission.bits) == permission.bits
     }
-
     if (member.roles.contains(roles[0])) {
         // permissions are setup and user has dj role
         return (djPermissions and permission.bits) == permission.bits
     }
-
     return false
 }

@@ -14,8 +14,11 @@ class NowPlayingCommand: Command(Permission.NOW_PLAYING, "nowplaying", "now", "c
                 ctx.reply("No music is playing on this guild! Use `!!!play` to play a song.")
                 return@launch
             }
-            ctx.reply("Currently playing **${song.title}** by **${song.author}** `[${song.formatDuration(ctx.server.audioPlayer.playingTrack.position, "mm:ss")}/${song.getFormattedDuration()}]`")
-
+            var msg = "Now playing **${song.title}** "
+            if (!song.track?.info?.isStream!!) {
+                msg += "by **${song.author}** `[${song.getFormattedDuration()}]`"
+            }
+            ctx.reply(msg)
         }
     }
 }

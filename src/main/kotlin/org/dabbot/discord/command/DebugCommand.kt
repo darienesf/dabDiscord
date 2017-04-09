@@ -9,27 +9,33 @@ import org.dabbot.discord.Permission
 class DebugCommand: Command(Permission.DEBUG, "debug") {
     override fun on(ctx: Context) {
         launch(CommonPool) {
-            var r = String()
-            r += "```"
-            r += "\nguild.id: ${ctx.server.guild.id}"
-            r += "\nshard.id: ${ctx.shard.shard}"
-            r += "\nping: ${ctx.shard.jda!!.ping}"
-            r += "\nconnected: ${ctx.server.connected}"
-            r += "\nisPaused: ${ctx.server.audioPlayer.isPaused}"
-            r += "\nplayingTrack: ${ctx.server.audioPlayer.playingTrack}"
-            if (ctx.server.audioPlayer.playingTrack != null) {
-                r += "\nsourceName: ${ctx.server.audioPlayer.playingTrack.sourceManager.sourceName}"
-                r += "\nidentifier: ${ctx.server.audioPlayer.playingTrack.identifier}"
-                r += "\ntitle: ${ctx.server.audioPlayer.playingTrack.info.title}"
-                r += "\nauthor: ${ctx.server.audioPlayer.playingTrack.info.author}"
-                r += "\nlength: ${ctx.server.audioPlayer.playingTrack.info.length}"
+            val builder = StringBuilder()
+            builder.append("__Shard:__")
+            builder.append("\nID: ${ctx.event.jda.shardInfo.shardId}/${ctx.event.jda.shardInfo.shardTotal}")
+            builder.append("\nPing: ${ctx.event.jda.ping}")
+            builder.append("\n\n__Guild:__")
+            builder.append("\nID: `${ctx.event.guild.id}`")
+            builder.append("\nConnected: ${ctx.server.connected}")
+            builder.append("\nPaused: ${ctx.server.audioPlayer.isPaused}")
+            builder.append("\n\n__User:__")
+            builder.append("\nID: `${ctx.event.author.id}`")
+            val track = ctx.server.audioPlayer.playingTrack
+            if (track != null) {
                 val current = ctx.server.queue!!.current()
-                r += "\ncurrent queueSongId: ${current?.queueSongId}"
-                r += "\ncurrent songId: ${current?.songId}"
-                r += "\ncurrent addedBy: ${current?.addedBy}"
-                r += "\ncurrent dateAdded: ${current?.dateAdded.toString()}"
+                builder.append("\n\n__Song:__")
+                builder.append("\nID: `${current?.songId}`")
+                builder.append("\nSource: ${track.sourceManager.sourceName}")
+                builder.append("\nIdentifier: ${track.identifier}")
+                builder.append("\nTitle: ${track.info.title}")
+                builder.append("\nAuthor: ${track.info.author}")
+                builder.append("\nDuration: ${current?.getFormattedDuration()}")
+                builder.append("\nTrack: $track")
+                builder.append("\n\n__Queue song:__")
+                builder.append("\nID: `${current?.queueSongId}`")
+                builder.append("\nAdded by: `${current?.addedBy}`")
+                builder.append("\nDate added: ${current?.dateAdded.toString()}")
             }
-            ctx.reply("$r```")
+            ctx.reply(builder.toString())
         }
     }
 }

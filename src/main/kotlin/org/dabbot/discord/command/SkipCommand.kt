@@ -25,7 +25,6 @@ class SkipCommand: Command(Permission.SKIP, "skip", "s", "next", "n", "sk") {
                     ctx.reply("Music was automatically resumed from being paused! To resume it manually, use `!!!resume`.")
                 }
                 ctx.server.play(song)
-
             }
         }
     }

@@ -23,27 +23,27 @@ class ResumeCommand: Command(Permission.RESUME, "resume", "r", "unpause", "start
                 }
                 ctx.server.resume()
                 ctx.reply("Music resumed!")
-            } else {
-                val song = ctx.server.queue!!.current()
-                if (song != null) {
-                    if (!ctx.server.connected) {
-                        ctx.server.open(ctx.getUserVoiceChannel()!!)
-                    }
-                    ctx.server.play(song)
-                    ctx.reply("Resumed playing!")
-                } else {
-                    val next = ctx.server.queue!!.next()
-                    if (next == null) {
-                        ctx.reply("No song to resume!")
-                    } else {
-                        if (!ctx.server.connected) {
-                            ctx.server.open(ctx.getUserVoiceChannel()!!)
-                        }
-                        ctx.server.play(next)
-                        ctx.reply("Started playing the next song!")
-                    }
-                }
+                return@launch
             }
+            val song = ctx.server.queue!!.current()
+            if (song != null) {
+                if (!ctx.server.connected) {
+                    ctx.server.open(ctx.getUserVoiceChannel()!!)
+                }
+                ctx.server.play(song)
+                ctx.reply("Resumed playing!")
+                return@launch
+            }
+            val next = ctx.server.queue!!.next()
+            if (next == null) {
+                ctx.reply("No song to resume!")
+                return@launch
+            }
+            if (!ctx.server.connected) {
+                ctx.server.open(ctx.getUserVoiceChannel()!!)
+            }
+            ctx.server.play(next)
+            ctx.reply("Started playing the next song!")
         }
     }
 }
