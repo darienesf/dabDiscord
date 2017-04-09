@@ -16,7 +16,6 @@ class CommandManager(config: Toml) {
                 ClearCommand(),
                 DebugCommand(),
                 HelpCommand(),
-                IgnoreCommand(),
                 InviteCommand(),
                 NowPlayingCommand(),
                 PauseCommand(),

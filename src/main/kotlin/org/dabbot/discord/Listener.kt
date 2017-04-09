@@ -3,9 +3,9 @@ package org.dabbot.discord
 import com.moandjiezana.toml.Toml
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.launch
+import net.dv8tion.jda.core.Permission
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent
 import net.dv8tion.jda.core.hooks.ListenerAdapter
-import org.dabbot.discord.property.ChannelIgnores
 import java.net.ConnectException
 import java.util.regex.Pattern
 
@@ -33,6 +33,9 @@ class Listener(val shard: Shard, val commandManager: CommandManager, config: Tom
         if (!matcher.find()) {
             return
         }
+        if (!event.guild.selfMember.hasPermission(event.textChannel, Permission.MESSAGE_WRITE)) {
+            return
+        }
         val name = matcher.group(1).toLowerCase()
         val cmd = commandManager.get(name)?: return
         var matches = matcher.group(2).split(splittingRegex)
@@ -42,9 +45,6 @@ class Listener(val shard: Shard, val commandManager: CommandManager, config: Tom
         launch(CommonPool) {
             try {
                 val ctx = Command.Context(shard, event, matches)
-                if ((ctx.server.properties["channelignore"] as ChannelIgnores).isIgnoring(event.textChannel)) {
-                    return@launch
-                }
                 if (!hasPermission(event.member, cmd.permission) && !admins.contains(event.member.user.id)) {
                     ctx.reply("You do not have permission to do that! Use `!!!permissions` to learn about dabBot's permission system.")
                 } else {

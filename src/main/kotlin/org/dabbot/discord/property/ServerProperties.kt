@@ -13,7 +13,7 @@ internal class ServerProperties(private val requester: Requester, private val se
                 map.put(property.key, property)
             }
         }
-        add(Announcements(server), ChannelIgnores(server), Loops(server), Repeats(server))
+        add(Announcements(server), Loops(server), Repeats(server))
         return this
     }
 
