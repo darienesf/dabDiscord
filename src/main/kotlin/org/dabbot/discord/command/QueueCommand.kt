@@ -31,7 +31,14 @@ class QueueCommand : Command(Permission.QUEUE, "queue", "q", "list", "show", "l"
             val current = ctx.server.queue!!.current()
             if (current != null) {
                 builder.append("__Currently playing:__")
-                builder.append("\n${current.title} by ${current.author} `[${current.formatDuration(ctx.server.audioPlayer.playingTrack.position, "mm:ss")}/${current.getFormattedDuration()}]`\n\n")
+                builder.append("\n${current.title} ")
+                val formattedPosition = current.formatDuration(ctx.server.audioPlayer.playingTrack.position, "mm:ss")
+                if (!current.track?.info?.isStream!!) {
+                    builder.append("by ${current.author} `[$formattedPosition/${current.getFormattedDuration()}]`")
+                } else {
+                    builder.append("`[$formattedPosition]`")
+                }
+                builder.append("\n\n")
             }
             val size = ctx.server.queue!!.size()
             if (size == 0) {
