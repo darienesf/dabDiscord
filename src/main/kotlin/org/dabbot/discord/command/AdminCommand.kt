@@ -15,11 +15,12 @@ import javax.script.ScriptEngineManager
 import javax.script.ScriptException
 
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
-class AdminCommand(private val config: Toml) : Command(Permission.ADMIN, "admin", "a") {
+class AdminCommand(config: Toml) : Command(Permission.ADMIN, "admin", "a") {
+    val admins: List<String> = config.getTable("discord").getList<String>("admins")
     val engineManager = ScriptEngineManager()
 
     override fun on(ctx: Context) {
-        if (!config.getTable("discord").getList<String>("admins").contains(ctx.event.author.id)) return
+        if (!admins.contains(ctx.event.author.id)) return
         if (ctx.args.isEmpty()) {
             ctx.reply("stop, open, close, js, encode, decode")
             return
@@ -75,6 +76,27 @@ class AdminCommand(private val config: Toml) : Command(Permission.ADMIN, "admin"
                 launch(CommonPool) {
                     val song = QueueSong(holder.decodedTrack, ctx.event.author.id)
                     ctx.server.queue!!.add(song)
+                }
+            }
+            "radio" -> {
+                if (ctx.args.size < 3) {
+                    ctx.reply("!!!a radio add <song id> <country> <genre>\n!!!a radio update <song id> <country> <genre>\n!!!a radio delete <song id>")
+                    return
+                }
+                val stations = ctx.server.radioStations
+                launch(CommonPool) {
+                    when (ctx.args[1].toLowerCase()) {
+                        "add" -> {
+                            stations.addStation(ctx.args[2].toLong(), ctx.args[3], ctx.args[4])
+                        }
+                        "update" -> {
+                            stations.updateStation(ctx.args[2].toLong(), ctx.args[3], ctx.args[4])
+                        }
+                        "delete" -> {
+                            stations.deleteStation(ctx.args[2].toLong())
+                        }
+                    }
+                    ctx.reply("Radio stations ${ctx.args[1].toLowerCase()}ed!")
                 }
             }
         }

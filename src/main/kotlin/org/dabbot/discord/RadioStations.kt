@@ -46,4 +46,30 @@ class RadioStations internal constructor(private val requester: Requester) {
         }
         return Station(JSONObject(r.body().string()))
     }
+
+    suspend fun addStation(songId: Long, country: String, genre: String) {
+        val r = requester.executeJSON(Method.POST, "/stations", JSONObject().put("song_id", songId)
+                .put("country", country).put("genre", genre))
+        if (r.code() == 400) {
+            // todo handle
+        }
+        r.close()
+    }
+
+    suspend fun updateStation(songId: Long, country: String, genre: String) {
+        val r = requester.executeJSON(Method.PUT, "/stations/$songId", JSONObject().put("country", country)
+                .put("genre", genre))
+        if (r.code() == 400) {
+            // todo handle
+        }
+        r.close()
+    }
+
+    suspend fun deleteStation(songId: Long) {
+        val r = requester.execute(Method.DELETE, "/stations/$songId")
+        if (r.code() == 400) {
+            // todo handle
+        }
+        r.close()
+    }
 }
