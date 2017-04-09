@@ -57,7 +57,10 @@ class QueueCommand : Command(Permission.QUEUE, "queue", "q", "list", "show", "l"
             val offset = page!! * PAGE_SIZE
             var i = offset + 1
             for (song in ctx.server.queue!!.list(PAGE_SIZE, offset)) {
-                builder.append("\n`%02d`".format(i) + " ${song.title} by ${song.author} `[${song.getFormattedDuration()}]`")
+                builder.append("\n`%02d`".format(i) + " ${song.title} ")
+                if (!song.track?.info?.isStream!!) {
+                    builder.append("by ${song.author} `[${song.getFormattedDuration()}]`")
+                }
                 i++
             }
             if (page!! < maxPage) {
