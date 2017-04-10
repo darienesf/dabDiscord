@@ -4,9 +4,12 @@ import com.moandjiezana.toml.Toml
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.launch
 import net.dv8tion.jda.core.Permission
+import net.dv8tion.jda.core.events.guild.GuildJoinEvent
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent
 import net.dv8tion.jda.core.hooks.ListenerAdapter
 import java.net.ConnectException
+import java.time.OffsetDateTime
+import java.util.*
 import java.util.regex.Pattern
 
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
@@ -55,5 +58,11 @@ class Listener(val shard: Shard, val commandManager: CommandManager, config: Tom
                 e.printStackTrace()
             }
         }
+    }
+
+    override fun onGuildJoin(event: GuildJoinEvent) {
+        if (event.guild.selfMember.joinDate.isBefore(OffsetDateTime.now().minusMinutes(10))) return
+
+        // todo send guild join message
     }
 }
