@@ -21,6 +21,7 @@ class CommandManager(config: Toml) {
                 PauseCommand(),
                 PermissionsCommand(),
                 PlayCommand(),
+                PropertiesCommand(),
                 QueueCommand(),
                 RadioCommand(),
                 RemoveCommand(),

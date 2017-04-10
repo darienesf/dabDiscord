@@ -37,6 +37,7 @@ enum class Permission(val bits: Int) {
     IGNORE          (1 shl 21),
     STOP            (1 shl 22),
     REMOVE          (1 shl 23),
+    PROPERTIES      (1 shl 24),
 }
 
 fun get(vararg permissions: Permission): Int {

@@ -3,6 +3,7 @@ package org.dabbot.discord.property
 import org.dabbot.discord.Method
 import org.dabbot.discord.Requester
 import org.dabbot.discord.Server
+import org.json.JSONArray
 import org.json.JSONObject
 
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
@@ -39,5 +40,21 @@ internal class ServerProperties(private val requester: Requester, private val se
             // todo o shit dude do something
         }
         r.close()
+    }
+
+    suspend fun list(): JSONArray? {
+        val r = requester.execute(Method.GET, "/properties/${server.guild.id}")
+        if (r.code() != 200) {
+            // todo do something lol
+            r.close()
+            return null
+        }
+        val json = JSONObject(r.body().string())
+        r.close()
+        if (!json.isNull("error")) {
+            // todo do something
+            return null
+        }
+        return json.getJSONArray("properties")
     }
 }
