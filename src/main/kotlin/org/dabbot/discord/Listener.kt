@@ -62,7 +62,6 @@ class Listener(val shard: Shard, val commandManager: CommandManager, config: Tom
 
     override fun onGuildJoin(event: GuildJoinEvent) {
         if (event.guild.selfMember.joinDate.isBefore(OffsetDateTime.now().minusMinutes(10))) return
-
         // todo send guild join message
     }
 }
