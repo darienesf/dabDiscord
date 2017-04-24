@@ -1,16 +1,15 @@
 package org.dabbot.discord
 
-import com.moandjiezana.toml.Toml
-import org.dabbot.discord.command.*
+import org.reflections.Reflections
 import java.util.*
 
-class CommandManager(config: Toml) {
+class CommandManager {
     val commands: MutableMap<String, Command> = HashMap()
 
     init {
-        register(
+        /*register(
                 AboutCommand(),
-                AdminCommand(config),
+                AdminCommand(),
                 AnnouncementsCommand(),
                 ChooseCommand(),
                 ClearCommand(),
@@ -34,7 +33,16 @@ class CommandManager(config: Toml) {
                 ShuffleCommand(),
                 SkipCommand(),
                 StopCommand()
-        )
+        )*/
+        Reflections("org.dabbot.discord.command").getSubTypesOf(Command::class.java).forEach { subType ->
+            val command = subType.newInstance()
+            try {
+                register(command)
+            } catch (e: RuntimeException) {
+                e.printStackTrace()
+                return@forEach
+            }
+        }
     }
 
     fun register(vararg cmds: Command) {
@@ -44,6 +52,7 @@ class CommandManager(config: Toml) {
                     val className = c.javaClass.name
                     throw RuntimeException("Command name collision $n in $className!")
                 }
+                c.manager = this
                 commands[n] = c
             }
         }

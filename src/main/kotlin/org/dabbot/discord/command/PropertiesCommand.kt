@@ -7,7 +7,7 @@ import org.dabbot.discord.Permission
 import org.json.JSONObject
 
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
-class PropertiesCommand: Command(Permission.PROPERTIES, "properties", "propertie", "settings", "setting", "propertys", "options") {
+class PropertiesCommand: Command(Permission.ADMIN, "properties", "propertie", "settings", "setting", "propertys", "options") {
     override fun on(ctx: Context) {
         launch(CommonPool) {
             val properties = ctx.server.propertyManager.list()

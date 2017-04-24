@@ -6,7 +6,7 @@ import org.dabbot.discord.Command
 import org.dabbot.discord.Permission
 
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
-class NowPlayingCommand: Command(Permission.NOW_PLAYING, "nowplaying", "now", "current", "song", "np", "nowplayng") {
+class NowPlayingCommand: Command(Permission.QUEUE, "nowplaying", "now", "current", "song", "np", "nowplayng") {
     override fun on(ctx: Context) {
         launch(CommonPool) {
             val song = ctx.server.queue!!.current()

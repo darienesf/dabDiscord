@@ -6,7 +6,7 @@ import org.dabbot.discord.Command
 import org.dabbot.discord.Permission
 
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
-class DebugCommand: Command(Permission.DEBUG, "debug") {
+class DebugCommand: Command(Permission.INFO, "debug") {
     override fun on(ctx: Context) {
         launch(CommonPool) {
             val builder = StringBuilder()

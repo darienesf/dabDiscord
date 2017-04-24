@@ -3,7 +3,7 @@ package org.dabbot.discord.command
 import org.dabbot.discord.Command
 import org.dabbot.discord.Permission
 
-class AboutCommand: Command(Permission.ABOUT, "about", "info", "support", "abot", "abut", "spport", "suppot") {
+class AboutCommand: Command(Permission.INFO, "about", "info", "support", "abot", "abut", "spport", "suppot") {
     val msg = "**dabBot - the music bot that makes you dab**" +
             "\nCommand prefix: `!!!`" +
             "\nCommand list: `!!!help`" +

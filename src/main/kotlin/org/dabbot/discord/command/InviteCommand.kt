@@ -4,7 +4,7 @@ import com.mashape.unirest.http.Unirest
 import net.dv8tion.jda.core.Permission
 import org.dabbot.discord.Command
 
-class InviteCommand: Command(org.dabbot.discord.Permission.INVITE, "invite", "addbot", "add", "join", "invit") {
+class InviteCommand: Command(org.dabbot.discord.Permission.INFO, "invite", "addbot", "add", "join", "invit") {
     val applicationsUrl = "https://discordapp.com/api/oauth2/applications/@me"
     val perms = Permission.getRaw(
             Permission.MESSAGE_READ,

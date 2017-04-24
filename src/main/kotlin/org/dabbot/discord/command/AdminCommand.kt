@@ -1,13 +1,11 @@
 package org.dabbot.discord.command
 
-import com.moandjiezana.toml.Toml
 import com.sedmelluq.discord.lavaplayer.tools.io.MessageInput
 import com.sedmelluq.discord.lavaplayer.tools.io.MessageOutput
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.launch
 import net.dv8tion.jda.core.entities.VoiceChannel
 import org.dabbot.discord.Command
-import org.dabbot.discord.Permission
 import org.dabbot.discord.QueueSong
 import java.io.ByteArrayOutputStream
 import java.util.*
@@ -15,12 +13,10 @@ import javax.script.ScriptEngineManager
 import javax.script.ScriptException
 
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
-class AdminCommand(config: Toml) : Command(Permission.ADMIN, "admin", "a") {
-    val admins: List<String> = config.getTable("discord").getList<String>("admins")
+class AdminCommand : Command("admin", "a") {
     val engineManager = ScriptEngineManager()
 
     override fun on(ctx: Context) {
-        if (!admins.contains(ctx.event.author.id)) return
         if (ctx.args.isEmpty()) {
             ctx.reply("stop, open, close, js, encode, decode")
             return

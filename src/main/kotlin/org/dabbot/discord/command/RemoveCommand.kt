@@ -6,7 +6,7 @@ import org.dabbot.discord.Command
 import org.dabbot.discord.Permission
 
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
-class RemoveCommand: Command(Permission.REMOVE, "remove", "delete", "rm", "remov", "remve", "del", "delet", "delte", "dlete") {
+class RemoveCommand: Command(Permission.MOD, "remove", "delete", "rm", "remov", "remve", "del", "delet", "delte", "dlete") {
     override fun on(ctx: Context) {
         if (!ctx.server.connected || !ctx.server.playing) {
             ctx.reply("No music is playing!")

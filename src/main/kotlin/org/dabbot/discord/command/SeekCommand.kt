@@ -5,7 +5,7 @@ import org.dabbot.discord.Permission
 import java.time.Duration
 import java.util.regex.Pattern
 
-class SeekCommand: Command(Permission.SEEK, "seek", "jump", "position", "positon") {
+class SeekCommand: Command(Permission.MOD, "seek", "jump", "position", "positon") {
     val timePattern: Pattern = Pattern.compile("(?:(?<hours>\\d{1,2}):)?(?:(?<minutes>\\d{1,2}):)?(?<seconds>\\d{1,2})")
     val usage = "Usage: `!!!jump <time>`\nExample: `!!!jump 03:51` - starts playing the current song at 3 min 51s " +
             "instead of at the start.\nTime format: `hh:mm:ss`, e.g. 01:25:51 = 1 hour, 25 minutes & 51 seconds"

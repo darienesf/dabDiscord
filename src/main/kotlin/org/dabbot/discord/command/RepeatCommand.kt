@@ -8,7 +8,7 @@ import org.dabbot.discord.property.Loops
 import org.dabbot.discord.property.Repeats
 
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
-class RepeatCommand: Command(Permission.REPEAT, "repeat", "repeatsong", "rs", "loop", "cycle") {
+class RepeatCommand: Command(Permission.MOD, "repeat", "repeatsong", "rs", "loop", "cycle") {
     override fun on(ctx: Context) {
         if (ctx.args.isEmpty()) {
             ctx.reply("Usage: `!!!repeat <song/queue>`\n`song` = repeat just this song." +

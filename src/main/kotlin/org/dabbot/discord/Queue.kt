@@ -5,7 +5,7 @@ import kotlinx.coroutines.experimental.channels.produce
 import org.json.JSONObject
 
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
-class Queue(val requester: Requester, val server: Server) {
+class Queue(val server: Server) {
     val serverId: String = server.guild.id
 
     private fun loadSong(o: JSONObject): QueueSong {
@@ -15,7 +15,7 @@ class Queue(val requester: Requester, val server: Server) {
     }
 
     suspend fun size(): Int {
-        val r = requester.execute(Method.GET, "/queues/$serverId/size")
+        val r = server.requester.execute(Method.GET, "/queues/$serverId/size")
         if (r.code() == 400) {
             // todo handle
             r.close()
@@ -27,7 +27,7 @@ class Queue(val requester: Requester, val server: Server) {
     }
 
     suspend fun list(limit: Int, offset: Int) = produce(CommonPool) {
-        val r = requester.execute(Method.GET, "/queues/$serverId?limit=$limit&offset=$offset")
+        val r = server.requester.execute(Method.GET, "/queues/$serverId?limit=$limit&offset=$offset")
         if (r.code() == 400) {
             // todo handle
             r.close()
@@ -45,7 +45,7 @@ class Queue(val requester: Requester, val server: Server) {
     suspend fun list() = list(0, 0)
 
     suspend fun next(): QueueSong? {
-        val r = requester.execute(Method.GET, "/queues/$serverId/next")
+        val r = server.requester.execute(Method.GET, "/queues/$serverId/next")
         if (r.code() == 400) {
             // no songs left in queue
             // TODO fire event
@@ -61,7 +61,7 @@ class Queue(val requester: Requester, val server: Server) {
     }
 
     suspend fun peek(): QueueSong? {
-        val r = requester.execute(Method.GET, "/queues/$serverId/peek")
+        val r = server.requester.execute(Method.GET, "/queues/$serverId/peek")
         if (r.code() == 400) {
             // no songs left in queue
             // TODO fire event
@@ -74,7 +74,7 @@ class Queue(val requester: Requester, val server: Server) {
     }
 
     suspend fun current(): QueueSong? {
-        val r = requester.execute(Method.GET, "/queues/$serverId/current")
+        val r = server.requester.execute(Method.GET, "/queues/$serverId/current")
         if (r.code() == 400) {
             r.close()
             return null
@@ -85,7 +85,7 @@ class Queue(val requester: Requester, val server: Server) {
     }
 
     suspend fun add(song: QueueSong) {
-        val r = requester.executeJSON(Method.POST, "/queues/$serverId/add", song.toJson())
+        val r = server.requester.executeJSON(Method.POST, "/queues/$serverId/add", song.toJson())
         if (r.code() != 200) {
             // todo
         }
@@ -99,7 +99,7 @@ class Queue(val requester: Requester, val server: Server) {
         val body = JSONObject()
                 .put("song_id", song.queueSongId)
                 .put("position", position)
-        val r = requester.executeJSON(Method.PUT, "/queues/$serverId/move", body)
+        val r = server.requester.executeJSON(Method.PUT, "/queues/$serverId/move", body)
         if (r.code() != 200) {
             // todo
         }
@@ -107,7 +107,7 @@ class Queue(val requester: Requester, val server: Server) {
     }
 
     suspend fun clear() {
-        val r = requester.execute(Method.DELETE, "/queues/$serverId/clear")
+        val r = server.requester.execute(Method.DELETE, "/queues/$serverId/clear")
         if (r.code() != 200) {
             // todo
         }
@@ -115,7 +115,7 @@ class Queue(val requester: Requester, val server: Server) {
     }
 
     suspend fun shuffle() {
-        val r = requester.execute(Method.GET, "/queues/$serverId/shuffle")
+        val r = server.requester.execute(Method.GET, "/queues/$serverId/shuffle")
         if (r.code() != 200) {
             // todo
         }
@@ -123,7 +123,7 @@ class Queue(val requester: Requester, val server: Server) {
     }
 
     suspend fun delete(position: Int) {
-        val r = requester.executeJSON(Method.DELETE, "/queues/$serverId/position", JSONObject()
+        val r = server.requester.executeJSON(Method.DELETE, "/queues/$serverId/position", JSONObject()
                 .put("position", position))
         if (r.code() != 200) {
             // todo

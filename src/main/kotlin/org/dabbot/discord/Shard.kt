@@ -44,7 +44,7 @@ class Shard(val config: Toml) {
 
     fun create() {
         println("Starting shard $shard...")
-        commandManager = CommandManager(config)
+        commandManager = CommandManager()
         listener = Listener(this, commandManager!!, config)
         playerManager = DefaultAudioPlayerManager()
         AudioSourceManagers.registerRemoteSources(playerManager)

@@ -5,7 +5,7 @@ import com.sedmelluq.discord.lavaplayer.source.AudioSourceManager
 import org.dabbot.discord.Command
 import org.dabbot.discord.Permission
 
-class ProvidersCommand: Command(Permission.ABOUT, "providers", "sources", "provider", "source", "sorces", "provides") {
+class ProvidersCommand: Command(Permission.INFO, "providers", "sources", "provider", "source", "sorces", "provides") {
     private var msg: String? = null
 
     private fun init(manager: DefaultAudioPlayerManager) {

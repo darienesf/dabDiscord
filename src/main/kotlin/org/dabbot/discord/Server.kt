@@ -14,10 +14,11 @@ import org.json.JSONObject
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
 class Server(val manager: ServerManager, val requester: Requester, val guild: Guild, val playerManager: AudioPlayerManager) {
     val audioPlayer: AudioPlayer = playerManager.createPlayer()
-    var queue: Queue? = Queue(requester, this)
+    var queue: Queue? = Queue(this)
     val properties = HashMap<String, Property>()
-    internal val propertyManager: ServerProperties = ServerProperties(requester, this).registerProperties(properties)
+    internal val propertyManager: ServerProperties = ServerProperties(this).registerProperties(properties)
     val radioStations = RadioStations(requester)
+    internal val permissions = ServerPermissions(this)
     var voiceChannel: VoiceChannel? = null
     val selectors: MutableMap<User, Selector> = HashMap()
     var playing = false

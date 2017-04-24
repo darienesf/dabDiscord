@@ -6,7 +6,7 @@ import org.dabbot.discord.Command
 import org.dabbot.discord.Permission
 
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
-class ResumeCommand: Command(Permission.RESUME, "resume", "r", "unpause", "start", "continue", "unhalt", "resum") {
+class ResumeCommand: Command(Permission.MOD, "resume", "r", "unpause", "start", "continue", "unhalt", "resum") {
     override fun on(ctx: Context) {
         if (!ctx.isUserInVoiceChannel()) {
             ctx.reply("You must be in a voice channel!")

@@ -6,7 +6,7 @@ import org.dabbot.discord.Command
 import org.dabbot.discord.Permission
 
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
-class StopCommand: Command(Permission.STOP, "stop", "end", "disconnect", "close", "dc", "leave") {
+class StopCommand: Command(Permission.MOD, "stop", "end", "disconnect", "close", "dc", "leave") {
     override fun on(ctx: Context) {
         ctx.server.stop()
         launch(CommonPool) {

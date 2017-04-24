@@ -7,12 +7,15 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.slf4j.LoggerFactory
 
-abstract class Command(val permission: Permission, name: String, vararg names: String) {
+abstract class Command(val permission: Permission?, name: String, vararg names: String) {
+    constructor(name: String, vararg names: String): this(null, name, *names)
+
     companion object {
         @JvmStatic private val LOG = LoggerFactory.getLogger(Command::class.java)
     }
 
     val names: Array<String?> = kotlin.arrayOfNulls<String?>(names.size + 1)
+    var manager: CommandManager? = null
 
     init {
         this.names[0] = name
@@ -26,7 +29,7 @@ abstract class Command(val permission: Permission, name: String, vararg names: S
     abstract fun on(ctx: Context)
 
     class Context internal constructor(val shard: Shard, val event: MessageReceivedEvent, val args: List<String>) {
-        val server = shard.serverManager?.getOrCreate(event.guild)!!
+        val server = shard.serverManager?.get(event.guild)!!
 
         init {
             server.lastTextChannel = event.textChannel

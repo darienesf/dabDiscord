@@ -8,7 +8,7 @@ import org.dabbot.discord.Permission
 import org.dabbot.discord.property.Announcements
 
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
-class AnnouncementsCommand: Command(Permission.ANNOUNCEMENTS, "announcements", "anouncements", "announcement", "setmusic", "setchannel", "musicchannel", "musicchanel", "annoncements") {
+class AnnouncementsCommand: Command(Permission.ADMIN, "announcements", "anouncements", "announcement", "setmusic", "setchannel", "musicchannel", "musicchanel", "annoncements") {
     override fun on(ctx: Context) {
         val property = ctx.server.properties["announcements"] as Announcements
         launch(CommonPool) {

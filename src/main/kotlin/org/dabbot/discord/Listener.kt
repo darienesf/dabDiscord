@@ -48,11 +48,15 @@ class Listener(val shard: Shard, val commandManager: CommandManager, config: Tom
         launch(CommonPool) {
             try {
                 val ctx = Command.Context(shard, event, matches)
-                if (!hasPermission(event.member, cmd.permission) && !admins.contains(event.member.user.id)) {
-                    ctx.reply("You do not have permission to do that! Use `!!!permissions` to learn about dabBot's permission system.")
-                } else {
-                    cmd.on(ctx)
+                val isAdmin = admins.contains(ctx.event.member.user.id)
+                if (cmd.permission == null && !isAdmin) {
+                    return@launch
                 }
+                if (!ctx.server.permissions.hasPermission(event.member, cmd.permission!!)/* && !isAdmin*/) {
+                    ctx.reply("You do not have permission to do that! Use `!!!permissions` to learn about dabBot's permission system.")
+                    return@launch
+                }
+                cmd.on(ctx)
             } catch (e: ConnectException) {
                 event.textChannel.sendMessage("Could not communicate with dabBot gateway!").queue()
                 e.printStackTrace()

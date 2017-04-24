@@ -1,13 +1,12 @@
 package org.dabbot.discord.property
 
 import org.dabbot.discord.Method
-import org.dabbot.discord.Requester
 import org.dabbot.discord.Server
 import org.json.JSONArray
 import org.json.JSONObject
 
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
-internal class ServerProperties(private val requester: Requester, private val server: Server) {
+internal class ServerProperties(private val server: Server) {
     internal fun registerProperties(map: MutableMap<String, Property>): ServerProperties {
         fun add(vararg properties: Property) {
             for (property in properties) {
@@ -19,7 +18,7 @@ internal class ServerProperties(private val requester: Requester, private val se
     }
 
     internal suspend fun get(property: String): String? {
-        val r = requester.execute(Method.GET, "/properties/${server.guild.id}/$property")
+        val r = server.requester.execute(Method.GET, "/properties/${server.guild.id}/$property")
         if (r.code() != 200) {
             r.close()
             return null
@@ -35,7 +34,7 @@ internal class ServerProperties(private val requester: Requester, private val se
     }
 
     internal suspend fun set(property: String, value: String) {
-        val r = requester.executePlainText(Method.PUT, "/properties/${server.guild.id}/$property", value)
+        val r = server.requester.executePlainText(Method.PUT, "/properties/${server.guild.id}/$property", value)
         if (r.code() != 200) {
             // todo o shit dude do something
         }
@@ -43,7 +42,7 @@ internal class ServerProperties(private val requester: Requester, private val se
     }
 
     suspend fun list(): JSONArray? {
-        val r = requester.execute(Method.GET, "/properties/${server.guild.id}")
+        val r = server.requester.execute(Method.GET, "/properties/${server.guild.id}")
         if (r.code() != 200) {
             // todo do something lol
             r.close()

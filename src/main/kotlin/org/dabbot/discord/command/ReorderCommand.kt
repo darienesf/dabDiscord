@@ -7,7 +7,7 @@ import org.dabbot.discord.Permission
 import org.dabbot.discord.QueueSong
 
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
-class ReorderCommand: Command(Permission.REORDER, "reorder", "order", "reordr", "changeorder", "swap") {
+class ReorderCommand: Command(Permission.MOD, "reorder", "order", "reordr", "changeorder", "swap") {
     override fun on(ctx: Context) {
         if (!ctx.server.connected || !ctx.server.playing) {
             ctx.reply("No music is playing!")

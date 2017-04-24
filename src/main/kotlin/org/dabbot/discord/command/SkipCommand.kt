@@ -6,7 +6,7 @@ import org.dabbot.discord.Command
 import org.dabbot.discord.Permission
 
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
-class SkipCommand: Command(Permission.SKIP, "skip", "s", "next", "n", "sk") {
+class SkipCommand: Command(Permission.MOD, "skip", "s", "next", "n", "sk") {
     override fun on(ctx: Context) {
         if (!ctx.isUserInVoiceChannel()) {
             ctx.reply("You must be in a voice channel!")

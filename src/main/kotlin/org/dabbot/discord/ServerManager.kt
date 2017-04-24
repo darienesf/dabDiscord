@@ -7,11 +7,7 @@ import java.util.*
 class ServerManager(shard: Shard, val requester: Requester, val playerManager: AudioPlayerManager) {
     private val servers: MutableMap<String, Server> = HashMap()
     
-    fun get(guild: Guild): Server? {
-        return servers[guild.id]
-    }
-
-    fun getOrCreate(guild: Guild): Server {
+    fun get(guild: Guild): Server {
         return servers.getOrPut(guild.id, { -> Server(this, requester, guild, playerManager)})
     }
 }

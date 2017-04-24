@@ -3,7 +3,7 @@ package org.dabbot.discord.command
 import org.dabbot.discord.Command
 import org.dabbot.discord.Permission
 
-class HelpCommand: Command(Permission.HELP, "help", "commands", "h", "music", "cmds", "hlp") {
+class HelpCommand: Command(Permission.INFO, "help", "commands", "h", "music", "cmds", "hlp") {
     val msg = "**Commands:**" +
             "\n`about` Information about the bot" +
             "\n`help` Shows command help" +
