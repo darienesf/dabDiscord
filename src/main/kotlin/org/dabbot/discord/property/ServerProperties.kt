@@ -13,7 +13,7 @@ internal class ServerProperties(private val server: Server) {
                 map.put(property.key, property)
             }
         }
-        add(Announcements(server), Loops(server), Repeats(server))
+        add(Announcements(server), Loops(server), Prefix(server), Repeats(server))
         return this
     }
 

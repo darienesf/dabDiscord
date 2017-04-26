@@ -7,22 +7,20 @@ import net.dv8tion.jda.core.Permission
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent
 import net.dv8tion.jda.core.hooks.ListenerAdapter
+import org.dabbot.discord.property.Prefix
 import java.net.ConnectException
 import java.time.OffsetDateTime
-import java.util.*
-import java.util.regex.Pattern
 
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
 class Listener(val shard: Shard, val commandManager: CommandManager, config: Toml): ListenerAdapter() {
-    val commandPattern: Pattern
     val developerMode: Boolean
-    val splittingRegex = Regex("\\s+")
+    val defaultPrefix: String
     val admins: List<String>
 
     init {
         val propertiesConfig = config.getTable("propertyManager")
-        commandPattern = Pattern.compile(propertiesConfig.getString("regex"))
         developerMode = propertiesConfig.getBoolean("developerMode")
+        defaultPrefix = propertiesConfig.getString("prefix")
         admins = config.getTable("discord").getList<String>("admins")
     }
 
@@ -31,28 +29,28 @@ class Listener(val shard: Shard, val commandManager: CommandManager, config: Tom
         if (author.isBot || author.id.equals(event.jda.selfUser.id, true)) {
             return
         }
-        val content = event.message.content
-        val matcher = commandPattern.matcher(content.replace("\r", " ").replace("\n", " "))
-        if (!matcher.find()) {
-            return
-        }
-        if (!event.guild.selfMember.hasPermission(event.textChannel, Permission.MESSAGE_WRITE)) {
-            return
-        }
-        val name = matcher.group(1).toLowerCase()
-        val cmd = commandManager.get(name)?: return
-        var matches = matcher.group(2).split(splittingRegex)
-        if (matches.isNotEmpty() && matches[0] == "") {
-            matches = ArrayList<String>(0)
-        }
+        var content = event.message.content
         launch(CommonPool) {
             try {
-                val ctx = Command.Context(shard, event, matches)
+                val server = shard.serverManager?.get(event.guild)!!
+                val prefix = (server.properties["prefix"] as Prefix).getPrefixOrElse(defaultPrefix)
+                if (content.length <= prefix.length || !content.startsWith(prefix)) {
+                    return@launch
+                }
+                if (!event.guild.selfMember.hasPermission(event.textChannel, Permission.MESSAGE_WRITE)) {
+                    return@launch
+                }
+                content = content.substring(prefix.length)
+                val matches = content.split(Regex("\\s+"))
+                if (matches.isEmpty()) {
+                    return@launch
+                }
+                val cmd = commandManager.get(matches[0].toLowerCase())?: return@launch
+                val ctx = Command.Context(shard, event, matches.subList(1, matches.size))
                 val isAdmin = admins.contains(ctx.event.member.user.id)
                 if (cmd.permission == null && !isAdmin) {
                     return@launch
-                }
-                if (!ctx.server.permissions.hasPermission(event.member, cmd.permission!!)/* && !isAdmin*/) {
+                } else if (cmd.permission != null && !ctx.server.permissions.hasPermission(event.member, cmd.permission) && !isAdmin) {
                     ctx.reply("You do not have permission to do that! Use `!!!permissions` to learn about dabBot's permission system.")
                     return@launch
                 }
