@@ -17,7 +17,7 @@ class PauseCommand: Command(Permission.MOD, "pause", "halt", "break") {
             return
         }
         if (ctx.server.isPaused()) {
-            ctx.reply("Music is already paused! To resume playback it, use `!!!resume`.")
+            ctx.reply("Music is already paused! To resume playback it, use `%prefix%resume`.")
             return
         }
         if (!ctx.server.connected) {

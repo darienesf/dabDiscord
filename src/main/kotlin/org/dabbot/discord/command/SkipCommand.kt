@@ -22,7 +22,7 @@ class SkipCommand: Command(Permission.MOD, "skip", "s", "next", "n", "sk") {
                 }
                 if (ctx.server.isPaused()) {
                     ctx.server.resume()
-                    ctx.reply("Music was automatically resumed from being paused! To resume it manually, use `!!!resume`.")
+                    ctx.reply("Music was automatically resumed from being paused! To resume it manually, use `%prefix%resume`.")
                 }
                 ctx.server.play(song)
             }

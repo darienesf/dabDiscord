@@ -11,9 +11,9 @@ import org.dabbot.discord.RadioStations
 class RadioCommand: Command(Permission.RADIO, "radio", "station", "stations", "rdio", "statins", "live") {
     private suspend fun list(stations: RadioStations, country: String?, genre: String?): String {
         val builder = StringBuilder("Streams a variety of radio stations.")
-        builder.append("\nTo play a radio station: `!!!radio <station name>`")
-        if (country == null) builder.append("\nFilter stations by country: `!!!radio country <country code>`")
-        if (genre == null) builder.append("\nFiler stations by genre: `!!!radio genre <genre>`")
+        builder.append("\nTo play a radio station: `%prefix%radio <station name>`")
+        if (country == null) builder.append("\nFilter stations by country: `%prefix%radio country <country code>`")
+        if (genre == null) builder.append("\nFiler stations by genre: `%prefix%radio genre <genre>`")
         builder.append("\n\n**Available stations:**\n")
         val iterator = stations.getStations(country, genre, null).iterator()
         while (iterator.hasNext()) {
@@ -23,7 +23,7 @@ class RadioCommand: Command(Permission.RADIO, "radio", "station", "stations", "r
                 builder.append(", ")
             }
         }
-        return builder.append("\n\nNeed another station? Join the support server with the link in `!!!support`.").toString()
+        return builder.append("\n\nNeed another station? Join the support server with the link in `%prefix%support`.").toString()
     }
 
     override fun on(ctx: Context) {
@@ -36,7 +36,7 @@ class RadioCommand: Command(Permission.RADIO, "radio", "station", "stations", "r
             if (ctx.args.size != 2) {
                 val station = stations.getStations(null, null, ctx.args[0]).receiveOrNull()
                 if (station == null) {
-                    ctx.reply("Invalid station! For usage & stations use `!!!radio`.")
+                    ctx.reply("Invalid station! For usage & stations use `%prefix%radio`.")
                     return@launch
                 }
                 station.load(ctx.server.playerManager)
@@ -52,7 +52,7 @@ class RadioCommand: Command(Permission.RADIO, "radio", "station", "stations", "r
                     ctx.reply(list(stations, null, ctx.args[1]))
                 }
                 else -> {
-                    ctx.reply("Invalid arguments! For usage & stations use `!!!radio`.")
+                    ctx.reply("Invalid arguments! For usage & stations use `%prefix%radio`.")
                 }
             }
         }

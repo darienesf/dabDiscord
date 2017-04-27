@@ -5,21 +5,24 @@ import org.dabbot.discord.Server
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
 class Prefix internal constructor(server: Server): Property(server, "prefix") {
     var cache: String? = null
+    var cached = false
 
     override fun invalidateCache() {
         cache = null
+        cached = false
     }
 
     suspend fun getPrefix(): String? {
-        if (cache != null) {
+        if (cached) {
             return cache
         }
         cache = getProperty()
+        cached = true
         return cache
     }
 
     suspend fun getPrefixOrElse(default: String): String {
-        return getProperty()?: default
+        return getPrefix()?: default
     }
 
     suspend fun setPrefix(prefix: String) {

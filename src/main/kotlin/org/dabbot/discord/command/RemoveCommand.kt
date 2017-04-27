@@ -13,7 +13,7 @@ class RemoveCommand: Command(Permission.MOD, "remove", "delete", "rm", "remov", 
             return
         }
         if (ctx.args.isEmpty()) {
-            ctx.reply("Usage: `!!!remove <song position>`")
+            ctx.reply("Usage: `%prefix%remove <song position>`")
             return
         }
         val position = ctx.args[0].toInt()

@@ -97,11 +97,11 @@ class PermissionsCommand: Command(Permission.ADMIN, "permissions", "roles", "per
         if (usage != null) return usage!!
         usage = "dabBot's permission system allows control over which commands each role can use!\n\n" +
                 "Commands:" +
-                "\n`!!!perms` - shows this message." +
-                "\n`!!!perms view <role>` - view the permissions of the specified role." +
-                "\n`!!!perms allow <role> <permission>` - allow a role to use commands within the specified permission." +
-                "\n`!!!perms deny <role> <permission>` - deny a role from using commands within the specified permission." +
-                "\n`!!!perms reset <role>` - reset the permissions of a role.\n\n" +
+                "\n`%prefix%perms` - shows this message." +
+                "\n`%prefix%perms view <role>` - view the permissions of the specified role." +
+                "\n`%prefix%perms allow <role> <permission>` - allow a role to use commands within the specified permission." +
+                "\n`%prefix%perms deny <role> <permission>` - deny a role from using commands within the specified permission." +
+                "\n`%prefix%perms reset <role>` - reset the permissions of a role.\n\n" +
                 "Hierarchy:" +
                 "\nThe dabBot permission system uses the base permissions of the `everyone` role and any other roles are added to the permissions of the `everyone` role." +
                 "\nAn important factor to take into account is that you cannot deny a permission from a role that the `everyone` role has.\n\n" +
@@ -161,7 +161,7 @@ class PermissionsCommand: Command(Permission.ADMIN, "permissions", "roles", "per
                 }
                 val permission = permissionFromInput(ctx.args[2])
                 if (permission == null) {
-                    ctx.reply("Invalid permission node `${ctx.args[2]}`. See `!!!perms` for a list of available permission nodes!")
+                    ctx.reply("Invalid permission node `${ctx.args[2]}`. See `%prefix%perms` for a list of available permission nodes!")
                     return
                 }
                 launch(CommonPool) {
@@ -197,7 +197,7 @@ class PermissionsCommand: Command(Permission.ADMIN, "permissions", "roles", "per
                 }
                 val permission = permissionFromInput(ctx.args[2])
                 if (permission == null) {
-                    ctx.reply("Invalid permission node `${ctx.args[2]}`. See `!!!perms` for a list of available permission nodes!")
+                    ctx.reply("Invalid permission node `${ctx.args[2]}`. See `%prefix%perms` for a list of available permission nodes!")
                     return
                 }
                 launch(CommonPool) {

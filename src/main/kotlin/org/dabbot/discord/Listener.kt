@@ -34,13 +34,16 @@ class Listener(val shard: Shard, val commandManager: CommandManager, config: Tom
             try {
                 val server = shard.serverManager?.get(event.guild)!!
                 val prefix = (server.properties["prefix"] as Prefix).getPrefixOrElse(defaultPrefix)
-                if (content.length <= prefix.length || !content.startsWith(prefix)) {
+                if (content.length <= prefix.length || (!content.startsWith(prefix) && !content.startsWith(prefix + " "))) {
                     return@launch
                 }
                 if (!event.guild.selfMember.hasPermission(event.textChannel, Permission.MESSAGE_WRITE)) {
                     return@launch
                 }
                 content = content.substring(prefix.length)
+                if (content[0] == ' ') {
+                    content = content.substring(1)
+                }
                 val matches = content.split(Regex("\\s+"))
                 if (matches.isEmpty()) {
                     return@launch
@@ -51,12 +54,11 @@ class Listener(val shard: Shard, val commandManager: CommandManager, config: Tom
                 if (cmd.permission == null && !isAdmin) {
                     return@launch
                 } else if (cmd.permission != null && !ctx.server.permissions.hasPermission(event.member, cmd.permission) && !isAdmin) {
-                    ctx.reply("You do not have permission to do that! Use `!!!permissions` to learn about dabBot's permission system.")
+                    ctx.reply("You do not have permission to do that! Use `%prefix%permissions` to learn about dabBot's permission system.")
                     return@launch
                 }
                 cmd.on(ctx)
             } catch (e: ConnectException) {
-                event.textChannel.sendMessage("Could not communicate with dabBot gateway!").queue()
                 e.printStackTrace()
             }
         }

@@ -24,8 +24,8 @@ class HelpCommand: Command(Permission.INFO, "help", "commands", "h", "music", "c
             "\n`reorder` Changes the position of a song in the queue" +
             "\n`shuffle` Shuffles the song queue" +
             "\n`move` Moves the bot to a different voice channel" +
-            "\n\n**Quick start:** Use `!!!play <link>` to start playing a song, use the same command to add another " +
-            "song, `!!!skip` to go to the next song and `!!!stop` to stop playing and leave."
+            "\n\n**Quick start:** Use `%prefix%play <link>` to start playing a song, use the same command to add another " +
+            "song, `%prefix%skip` to go to the next song and `%prefix%stop` to stop playing and leave."
 
     override fun on(ctx: Context) {
         ctx.reply(msg)

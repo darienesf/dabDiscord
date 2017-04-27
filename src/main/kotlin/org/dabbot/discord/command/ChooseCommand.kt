@@ -17,7 +17,7 @@ class ChooseCommand: Command(Permission.PLAY, "choose", "pick", "select", "cance
         val num = ctx.args[0].toIntOrNull()
         if (num == null || num < 1 || num > selector!!.limit) {
             ctx.reply("Invalid input `$num`. Must be integer within the range 1 - ${selector!!.limit}." +
-                    "\n**To cancel selection**, use `!!!cancel`.")
+                    "\n**To cancel selection**, use `%prefix%cancel`.")
         }
         selector.choose(num!!)
     }

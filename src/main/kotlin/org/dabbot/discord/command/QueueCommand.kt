@@ -18,7 +18,7 @@ class QueueCommand : Command(Permission.QUEUE, "queue", "q", "list", "show", "l"
         } else {
             page = ctx.args[0].toIntOrNull()
             if (page == null) {
-                ctx.reply("Invalid page! Usage: `!!!queue <page number>`")
+                ctx.reply("Invalid page! Usage: `%prefix%queue <page number>`")
                 return
             }
         }
@@ -43,7 +43,7 @@ class QueueCommand : Command(Permission.QUEUE, "queue", "q", "list", "show", "l"
             val size = ctx.server.queue!!.size()
             if (size == 0) {
                 if (builder.isEmpty()) {
-                    ctx.reply("The song queue is empty and no song is currently playing! Add a song with `!!!play <song name or title>`.")
+                    ctx.reply("The song queue is empty and no song is currently playing! Add a song with `%prefix%play <song name or title>`.")
                 } else {
                     ctx.reply(builder.toString())
                 }
@@ -64,7 +64,7 @@ class QueueCommand : Command(Permission.QUEUE, "queue", "q", "list", "show", "l"
                 i++
             }
             if (page!! < maxPage) {
-                builder.append("\n\n__To see the next page:__ `!!!queue ${page!! + 2}`\nTo see the full queue, use `!!!queue all`")
+                builder.append("\n\n__To see the next page:__ `%prefix%queue ${page!! + 2}`\nTo see the full queue, use `%prefix%queue all`")
             }
             ctx.reply(builder.toString())
         }

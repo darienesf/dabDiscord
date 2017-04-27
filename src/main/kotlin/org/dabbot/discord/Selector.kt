@@ -9,8 +9,8 @@ class Selector(val items: List<SelectorItem>, val callback: (Boolean, SelectorIt
             if (i == limit) break
             i++
         }
-        r += "\n**To choose**, use `!!!choose <number>`\nExample: `!!!choose 2` would pick the second option." +
-                "\n**To cancel**, use `!!!cancel`."
+        r += "\n**To choose**, use `%prefix%choose <number>`\nExample: `%prefix%choose 2` would pick the second option." +
+                "\n**To cancel**, use `%prefix%cancel`."
         return r
     }
 

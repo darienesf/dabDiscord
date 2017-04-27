@@ -64,7 +64,7 @@ class AdminCommand : Command("admin", "a") {
             }
             "decode" -> {
                 if (ctx.args.size < 2) {
-                    ctx.reply("!!!a decode <encoded track>")
+                    ctx.reply("%prefix%a decode <encoded track>")
                     return
                 }
                 val bytes = Base64.getDecoder().decode(ctx.args[1].toByteArray())
@@ -76,7 +76,7 @@ class AdminCommand : Command("admin", "a") {
             }
             "radio" -> {
                 if (ctx.args.size < 3) {
-                    ctx.reply("!!!a radio add <song id> <country> <genre>\n!!!a radio update <song id> <country> <genre>\n!!!a radio delete <song id>")
+                    ctx.reply("%prefix%a radio add <song id> <country> <genre>\n%prefix%a radio update <song id> <country> <genre>\n%prefix%a radio delete <song id>")
                     return
                 }
                 val stations = ctx.server.radioStations

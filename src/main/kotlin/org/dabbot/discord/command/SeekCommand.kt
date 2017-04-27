@@ -7,7 +7,7 @@ import java.util.regex.Pattern
 
 class SeekCommand: Command(Permission.MOD, "seek", "jump", "position", "positon") {
     val timePattern: Pattern = Pattern.compile("(?:(?<hours>\\d{1,2}):)?(?:(?<minutes>\\d{1,2}):)?(?<seconds>\\d{1,2})")
-    val usage = "Usage: `!!!jump <time>`\nExample: `!!!jump 03:51` - starts playing the current song at 3 min 51s " +
+    val usage = "Usage: `%prefix%jump <time>`\nExample: `%prefix%jump 03:51` - starts playing the current song at 3 min 51s " +
             "instead of at the start.\nTime format: `hh:mm:ss`, e.g. 01:25:51 = 1 hour, 25 minutes & 51 seconds"
 
     override fun on(ctx: Context) {
@@ -52,6 +52,6 @@ class SeekCommand: Command(Permission.MOD, "seek", "jump", "position", "positon"
         time += Duration.ofMinutes(minutes).toMillis()
         time += Duration.ofSeconds(seconds).toMillis()
         ctx.server.audioPlayer.playingTrack.position = time
-        ctx.reply("Jumped to the specified position. Use `!!!nowplaying` to see the current song & position.")
+        ctx.reply("Jumped to the specified position. Use `%prefix%nowplaying` to see the current song & position.")
     }
 }

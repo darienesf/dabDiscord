@@ -11,7 +11,7 @@ class NowPlayingCommand: Command(Permission.QUEUE, "nowplaying", "now", "current
         launch(CommonPool) {
             val song = ctx.server.queue!!.current()
             if (song == null) {
-                ctx.reply("No music is playing on this guild! Use `!!!play` to play a song.")
+                ctx.reply("No music is playing on this guild! Use `%prefix%play` to play a song.")
                 return@launch
             }
             var msg = "Now playing **${song.title}** "

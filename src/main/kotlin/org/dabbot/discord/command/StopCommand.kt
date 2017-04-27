@@ -11,7 +11,7 @@ class StopCommand: Command(Permission.MOD, "stop", "end", "disconnect", "close",
         ctx.server.stop()
         launch(CommonPool) {
             ctx.server.close()
-            ctx.reply("Music stopped! :warning: **THIS NO LONGER CLEARS THE SONG QUEUE!** Use `!!!clear` to do this.")
+            ctx.reply("Music stopped! :warning: **THIS NO LONGER CLEARS THE SONG QUEUE!** Use `%prefix%clear` to do this.")
         }
     }
 }

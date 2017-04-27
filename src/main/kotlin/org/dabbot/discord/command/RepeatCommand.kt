@@ -11,7 +11,7 @@ import org.dabbot.discord.property.Repeats
 class RepeatCommand: Command(Permission.MOD, "repeat", "repeatsong", "rs", "loop", "cycle") {
     override fun on(ctx: Context) {
         if (ctx.args.isEmpty()) {
-            ctx.reply("Usage: `!!!repeat <song/queue>`\n`song` = repeat just this song." +
+            ctx.reply("Usage: `%prefix%repeat <song/queue>`\n`song` = repeat just this song." +
                     "\n`queue` = repeat the whole song queue.")
             return
         }
@@ -36,7 +36,7 @@ class RepeatCommand: Command(Permission.MOD, "repeat", "repeatsong", "rs", "loop
                     ctx.reply("Disabled queue repeating!")
                 }
             } else {
-                ctx.reply("Usage: `!!!repeat <song/queue>`\n`song` = repeat just this song." +
+                ctx.reply("Usage: `%prefix%repeat <song/queue>`\n`song` = repeat just this song." +
                         "\n`queue` = repeat the whole song queue.")
             }
         }

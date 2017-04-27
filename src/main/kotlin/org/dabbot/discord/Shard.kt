@@ -19,6 +19,7 @@ class Shard(val config: Toml) {
     var shard = 0
     private val token: String
     private val game: String
+    val prefix: String
     val client: Client
 
     var jda: JDA? = null
@@ -32,6 +33,7 @@ class Shard(val config: Toml) {
         val discordConfig = config.getTable("discord")
         this.token = discordConfig.getString("token")
         this.game = discordConfig.getString("game")
+        this.prefix = config.getTable("propertyManager").getString("prefix")
         create()
         client = Client(this).connect()
     }
