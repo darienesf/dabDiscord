@@ -34,10 +34,19 @@ class Listener(val shard: Shard, val commandManager: CommandManager, config: Tom
             try {
                 val server = shard.serverManager?.get(event.guild)!!
                 val prefix = (server.properties["prefix"] as Prefix).getPrefixOrElse(defaultPrefix)
-                if (content.length <= prefix.length || (!content.startsWith(prefix) && !content.startsWith(prefix + " "))) {
+                if (!event.guild.selfMember.hasPermission(event.textChannel, Permission.MESSAGE_WRITE)) {
                     return@launch
                 }
-                if (!event.guild.selfMember.hasPermission(event.textChannel, Permission.MESSAGE_WRITE)) {
+                val mention = "@${event.jda.selfUser.name} "
+                if (content.startsWith(mention)) {
+                    val cmd = content.substring(mention.length).toLowerCase()
+                    println(cmd)
+                    if (cmd == "prefix" || cmd == "help") {
+                        event.textChannel.sendMessage("Command prefix: `$prefix`\nHelp command: `${prefix}help`").queue()
+                    }
+                    return@launch
+                }
+                if (content.length <= prefix.length || (!content.startsWith(prefix) && !content.startsWith(prefix + " "))) {
                     return@launch
                 }
                 content = content.substring(prefix.length)
